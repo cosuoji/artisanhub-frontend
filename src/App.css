@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+html {
+    font-family: 'Adobe Garamond Pro', sans-serif;
+}
+
+
+p {
+    font-family: "Inter", sans-serif; 
+}
+
+/* button{
+    background-color: #1E3A8A;
+} */
