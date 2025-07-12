@@ -62,9 +62,17 @@ export const useAuthStore = create((set, get) => ({
     set({ loading: true });
     try {
       const res = await axiosInstance.post('/auth/signup', formData, { withCredentials: true });
+  
       localStorage.setItem('authUser', JSON.stringify(res.data));
-      await get().fetchUserData();
-      set({ loading: false });
+  
+      try {
+        await get().fetchUserData(); // try to fetch profile
+      } catch (err) {
+        console.warn("⚠️ Failed to fetch user after signup");
+        toast.error("You are signed up, but authentication failed. Please log in.");
+        return false;
+      }
+        set({ loading: false });
       return true;
     } catch (err) {
       toast.error(err.response?.data?.message || 'Signup failed');
@@ -72,7 +80,7 @@ export const useAuthStore = create((set, get) => ({
       return false;
     }
   },
-
+  
   logout: async () => {
     try {
       await axiosInstance.post('/auth/logout');
@@ -97,7 +105,6 @@ export const useAuthStore = create((set, get) => ({
       const res = await axiosInstance.post('/auth/refresh-token', {}, { withCredentials: true });
       return res.data;
     } catch (err) {
-      toast.error('Session expired. Please log in again.');
       await get().logout(); // Clear everything
       throw err;
     }
@@ -127,7 +134,17 @@ export const useAuthStore = create((set, get) => ({
       set({ loading: false });
     }
   },
-
+  updateProfile: async (data) => {
+    try {
+      const res = await axiosInstance.patch('/users/profile', data);
+      toast.success('Profile updated');
+      set({ user: res.data.user });
+      return true;
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to update profile');
+      return false;
+    }
+  },
   resetPassword: async (token, password) => {
     set({ loading: true });
     try {

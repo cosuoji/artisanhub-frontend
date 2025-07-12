@@ -8,7 +8,7 @@ export default function Dashboard() {
   const { user } = useAuthStore();
 
   if (!user) return <p className="p-6 text-charcoal">Loading...</p>;
-
+ 
   return (
     <div className="p-6">
       {user.role === 'user' && <UserDashboard />}

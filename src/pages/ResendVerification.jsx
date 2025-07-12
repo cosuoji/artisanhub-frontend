@@ -3,7 +3,7 @@ import { useAuthStore } from '../store/useAuthStore';
 
 export default function ResendVerification() {
   const [email, setEmail] = useState('');
-  const { resendVerification, loading } = useAuthStore();
+  const {user, resendVerification, loading } = useAuthStore();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,7 +18,7 @@ export default function ResendVerification() {
           type="email"
           placeholder="Your email address"
           className="w-full border p-2 rounded"
-          value={email}
+          value={email || user?.email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />

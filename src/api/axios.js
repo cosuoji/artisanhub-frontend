@@ -6,8 +6,7 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-let isRefreshing = false;
-let failedQueue = [];
+
 
 const publicRoutes = [
   '/',
@@ -34,23 +33,21 @@ export const setupAxiosInterceptor = () => {
     res => res,
     async (error) => {
       const originalRequest = error.config;
-
-      // Prevent retry if:
-      // 1. Already retried once
-      // 2. It's a public route like /login, /signup etc.
-      const url = new URL(originalRequest.url, axiosInstance.defaults.baseURL).pathname;
-
-      const isPublic = publicRoutes.some(route =>
-        new RegExp('^' + route.replace(/:\w+/g, '[^/]+') + '$').test(url)
-      );
-
+  
+      const url = new URL(originalRequest.url, window.location.origin).pathname;
+  
+      // ✅ Prevent retry logic for login, signup, reset password, etc.
+      if (originalRequest._shouldRetry === false) {
+        return Promise.reject(error);
+      }
+  
+      // Only retry for private routes
       if (
         error.response?.status === 401 &&
         !originalRequest._retry &&
-        !isPublic
+        !isPublicRoute(url)
       ) {
         originalRequest._retry = true;
-
         try {
           await useAuthStore.getState().refreshToken();
           return axiosInstance(originalRequest);
@@ -59,7 +56,7 @@ export const setupAxiosInterceptor = () => {
           return Promise.reject(refreshError);
         }
       }
-
+  
       return Promise.reject(error);
     }
   );
