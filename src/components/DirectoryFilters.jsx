@@ -14,11 +14,14 @@ export default function DirectoryFilters({
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFilters((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+    const updatedFilters = {
+      ...filters,
+      [name]: name === 'skill' ? value.toLowerCase() : (type === 'checkbox' ? checked : value),
+    };
+    setFilters(updatedFilters);
+    onApply(updatedFilters); // 🚀 Auto-apply after change
   };
+  
 
   // Debounced autocomplete
   useEffect(() => {
@@ -116,18 +119,6 @@ export default function DirectoryFilters({
 
       {/* Buttons */}
       <div className="flex gap-2 pt-2">
-        <button
-          onClick={onApply}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Apply
-        </button>
-        <button
-          onClick={onReset}
-          className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
-        >
-          Reset
-        </button>
         <button
           onClick={onLocateMe}
           className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700"

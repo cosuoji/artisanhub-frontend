@@ -3,6 +3,9 @@ import { useArtisanStore } from '../store/useArtisanStore';
 import DirectoryFilters from '../components/DirectoryFilters';
 import ArtisanMap from '../components/ArtisanMap';
 import ArtisanMapList from '../components/ArtisanMapList';
+import { useDebounce } from '../hooks/useDebounce';
+import axiosInstance from '../api/axios';
+
 
 export default function DirectoryPage() {
   const {
@@ -19,9 +22,22 @@ export default function DirectoryPage() {
   });
 
   useEffect(() => { fetchArtisans(filters, 1); }, []);
+  const debouncedFilters = useDebounce(filters, 500); // 👈 debounce here
+
+    // Auto fetch when debounced filters change (and reset to page 1)
+    useEffect(() => {
+      fetchArtisans({ ...debouncedFilters }, 1);
+    }, [debouncedFilters]);
+
   const [locations, setLocations] = useState([]);
 
-  const applyFilters = () => fetchArtisans(filters);
+  const applyFilters = (customFilters = filters) => {
+    const sanitized = {
+      ...customFilters,
+      skill: customFilters.skill?.toLowerCase() || '',
+    };
+    fetchArtisans(sanitized);
+  };
 
 
   const resetFilters = () => {
@@ -33,8 +49,8 @@ export default function DirectoryPage() {
       onlyApproved: false,
       availableOnly: false,
     });
-    fetchArtisans(); // 👈 re-fetch all artisans immediately
-  };
+    fetchArtisans({}, 1); // ✅ fetch all artisans on reset
+   };
 
   const handlePageChange = (newPage) => fetchArtisans(filters, newPage);
 
@@ -50,6 +66,12 @@ export default function DirectoryPage() {
       { enableHighAccuracy: true }
     );
   };
+
+  useEffect(() => {
+    axiosInstance.get('/locations')
+      .then((res) => setLocations(res.data.filter(loc => loc.isActive)))
+      .catch(() => {});
+  }, []);
 
   return (
     <div>

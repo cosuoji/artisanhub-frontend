@@ -6,13 +6,17 @@ import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
 import Reviews from '../components/ArtisanReviews';
 import ReviewForm from '../components/ReviewForm';
-
+import ContactModal from '../components/ContactModal';
+import BookingModal from '../components/BookingModal';
 
 
 export default function ArtisanProfilePage() {
   const { id } = useParams();
 
   const {loading,fetchArtisan, artisan} = useArtisanStore();
+  const [showContact, setShowContact] = useState(false);
+  const [showBooking, setShowBooking] = useState(false);
+
 
 
   useEffect(() => {
@@ -31,7 +35,7 @@ export default function ArtisanProfilePage() {
     isArtisan,
   } = artisan;
 
-  const { bio, skills, address, yearsOfExperience, rating, totalReviews, location, totalJobsCompleted } = artisanProfile || {};
+  const { bio, skills,address, yearsOfExperience, rating, totalReviews, totalJobsCompleted } = artisanProfile || {};
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded shadow space-y-6">
       {/* Profile Header */}
@@ -47,15 +51,36 @@ export default function ArtisanProfilePage() {
           <p className="text-sm">{yearsOfExperience} yrs experience</p>
         </div>
               {/* CTA Buttons */}
+
+        <ContactModal
+            isOpen={showContact}
+            onClose={() => setShowContact(false)}
+            phone={phone}
+            email={email}
+            address={address}
+            />        
+
       <div className="flex gap-4">
-        <button className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700">
-          Contact
+        <button 
+        onClick={() => setShowContact(true)}
+        className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700">
+         Contact Me
         </button>
-        <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+
+        <BookingModal
+            artisanId={artisan._id}
+            isOpen={showBooking}
+            onClose={() => setShowBooking(false)}
+            />
+
+
+        <button 
+         onClick={() => setShowBooking(true)}
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
           Book Now
         </button>
       </div>
-
       </div>
 
       {/* Ratings */}
@@ -83,8 +108,6 @@ export default function ArtisanProfilePage() {
 
       {/* Location */}
       <div>
-      <h2 className="font-semibold">Address</h2>
-      <p className="text-sm">{address || 'Not specified'}</p>
         <h2 className="font-semibold">Location</h2>
          <p className="text-sm">{capitalizeWords(artisan?.artisanProfile?.location?.name) || 'Not specified'}</p> 
       </div>

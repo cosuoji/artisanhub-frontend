@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast';
 
 export const useJobStore = create((set, get) => ({
   jobs: [],
+  artisanJobs: [],
   job: null,
   loading: false,
   totalJobs: 0,
@@ -17,8 +18,18 @@ export const useJobStore = create((set, get) => ({
   fetchUserJobs: async (page = 1) => {
     set({ loading: true, jobError: null });
     try {
-      const res = await axios.get(`/jobs?page=${page}&limit=10`);
+      const res = await axiosInstance.get(`/jobs?page=${page}&limit=10`);
       set({ jobs: res.data.jobs, totalJobs: res.data.total, currentPage: page, loading: false });
+    } catch (err) {
+      set({ jobError: err.response?.data?.message || 'Failed to load jobs', loading: false });
+    }
+  },
+
+  fetchArtisanJobs: async (page = 1) => {
+    set({ loading: true, jobError: null });
+    try {
+      const res = await axiosInstance.get(`/jobs/artisan?page=${page}&limit=10`);
+      set({ artisanJobs: res.data.jobs, totalJobs: res.data.total, currentPage: page, loading: false });
     } catch (err) {
       set({ jobError: err.response?.data?.message || 'Failed to load jobs', loading: false });
     }
@@ -72,7 +83,7 @@ export const useJobStore = create((set, get) => ({
     try {
       await axiosInstance.patch(`/jobs/${id}/complete`);
       toast.success('Job marked as completed');
-      get().fetchUserJobs();
+      get().fetchArtisanJobs();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Could not complete job');
     }

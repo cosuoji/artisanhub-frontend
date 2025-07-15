@@ -20,6 +20,7 @@ export const useArtisanStore = create((set) => ({
         limit: 10,
       };
       const res = await axiosInstance.get('/artisans', { params });
+      console.log(res)
       set({
         artisans: res.data.artisans,
         pagination: { page: res.data.page, totalPages: res.data.totalPages },

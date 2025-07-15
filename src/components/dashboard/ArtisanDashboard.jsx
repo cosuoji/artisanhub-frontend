@@ -22,7 +22,7 @@ export default function ArtisanDashboard() {
   }, []);
 
 
-  if (!user || !profile) {
+  if (!user) {
     return (
       <div className="bg-white p-6 rounded shadow">
         <p>You haven’t completed your artisan profile yet.</p>

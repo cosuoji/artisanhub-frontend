@@ -142,7 +142,7 @@ export default function ArtisanPortfolioSection({ profile, refreshProfile }) {
    {/* Portfolio Section */}
       <h3 className="text-lg font-semibold text-charcoal mb-2">Portfolio</h3>
       <div className="flex gap-2 overflow-x-auto">
-        {profile.portfolioImages.map((img, i) => (
+        {profile?.portfolioImages.map((img, i) => (
           <div key={i} className="relative">
             <img
               src={img}

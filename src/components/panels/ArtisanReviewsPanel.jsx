@@ -7,7 +7,7 @@ import { useAuthStore } from '../../store/useAuthStore';
 export default function ArtisanReviewPanel() {
   const { reviews, loading, fetchReviews, page, totalPages } = useReviewStore();
   const {user} = useAuthStore();
-  console.log(user._id)
+
 
   useEffect(() => {
     fetchReviews(user?._id);

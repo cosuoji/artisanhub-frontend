@@ -5,11 +5,11 @@ import JobDetailModal from './JobDetailsModal';
 import { format } from 'date-fns';
 
 export default function ArtisanJobPanel() {
-  const { jobs, fetchUserJobs, markJobCompleted, jobLoading } = useJobStore();
+  const { artisanJobs, fetchArtisanJobs, markJobCompleted, jobLoading } = useJobStore();
   const [selectedJob, setSelectedJob] = useState(null);
 
   useEffect(() => {
-    fetchUserJobs(); // for artisan this returns jobs assigned to them
+    fetchArtisanJobs(); // for artisan this returns jobs assigned to them
   }, []);
 
   if (jobLoading) return <p className="p-6 text-charcoal">Loading your jobs...</p>;
@@ -18,17 +18,16 @@ export default function ArtisanJobPanel() {
     <div className="space-y-4">
       <h2 className="text-xl font-semibold text-charcoal">My Assigned Jobs</h2>
 
-      {jobs.length === 0 ? (
+      {artisanJobs.length === 0 ? (
         <p className="text-gray-500">You have no assigned jobs yet.</p>
       ) : (
         <div className="grid md:grid-cols-2 gap-4">
-          {jobs.map((job) => (
+          {artisanJobs.map((job) => (
             <div
               key={job._id}
               className="bg-white p-4 rounded shadow border flex flex-col justify-between"
             >
               <div>
-                <p className="text-lg font-medium text-charcoal">{job.title}</p>
                 <p className="text-sm text-gray-600 mt-1">{job.description}</p>
                 <p className="text-sm mt-2">
                   <span className="font-medium">Date:</span>{' '}

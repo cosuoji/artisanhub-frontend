@@ -61,7 +61,7 @@ export default function ProfileTab({ user, fetchUserData }) {
     if (newSkill && formData.skills.length < 5) {
       setFormData((prev) => ({
         ...prev,
-        skills: [...prev.skills, newSkill.trim()],
+        skills: [...prev.skills, newSkill.trim().toLowerCase()],
       }));
       setNewSkill('');
     }
@@ -102,6 +102,7 @@ export default function ProfileTab({ user, fetchUserData }) {
     }
   };
 
+
   return (
     <div className="space-y-8">
       {/* Welcome Header */}
@@ -124,15 +125,15 @@ export default function ProfileTab({ user, fetchUserData }) {
             </Link>
           </div>
         </div>
-        <div className="text-right">
+      {profile &&   <div className="text-right">
           <p className="text-sm">
             Status:{" "}
             <span
               className={`font-medium ${
-                profile.available ? "text-green-600" : "text-red-600"
+                profile?.available ? "text-green-600" : "text-red-600"
               }`}
             >
-              {profile.available ? "Available for work" : "Not available"}
+              {profile?.available ? "Available for work" : "Not available"}
             </span>
           </p>
           <button
@@ -142,7 +143,7 @@ export default function ProfileTab({ user, fetchUserData }) {
           >
             {toggling ? "Toggling..." : "Toggle Availability"}
           </button>
-        </div>
+        </div>}
       </section>
 
       {/* Edit Form */}
@@ -159,10 +160,10 @@ export default function ProfileTab({ user, fetchUserData }) {
 
         {!editMode ? (
           <div className="mt-4 space-y-1">
-            <p><strong>Bio:</strong> {profile.bio || "—"}</p>
-            <p><strong>Years of Experience:</strong> {profile.yearsOfExperience || "—"}</p>
-            <p><strong>Skills:</strong> {profile.skills?.join(", ") || "—"}</p>
-            <p><strong>Address:</strong> {profile.address || "—"}</p>
+            <p><strong>Bio:</strong> {profile?.bio || "—"}</p>
+            <p><strong>Years of Experience:</strong> {profile?.yearsOfExperience || "—"}</p>
+            <p><strong>Skills:</strong> {profile?.skills?.join(", ") || "—"}</p>
+            <p><strong>Address:</strong> {profile?.address || "—"}</p>
 
             <p className="flex items-center gap-1">
               <MdLocationOn className="text-gray-500" />
@@ -170,8 +171,8 @@ export default function ProfileTab({ user, fetchUserData }) {
             </p>
             <p>
               Profile Status:{" "}
-              <span className={`font-medium ${profile.isApproved ? "text-green-600" : "text-yellow-600"}`}>
-                {profile.isApproved ? "Approved" : "Pending Approval"}
+              <span className={`font-medium ${profile?.isApproved ? "text-green-600" : "text-yellow-600"}`}>
+                {profile?.isApproved ? "Approved" : "Pending Approval"}
               </span>
             </p>
           </div>
