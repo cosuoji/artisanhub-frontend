@@ -8,28 +8,43 @@ export const useReviewStore = create((set, get) => ({
     totalReviews: 0,
     totalPages: 1,
     currentPage: 1,
-  loading: false,
+    loading: false,
+    error: null,
 
-  fetchArtisanReviews: async (artisanId) => {
-    set({ loading: true });
-    try {
-      const res = await axiosInstance.get(`/reviews/artisan/${artisanId}`);
-      set({ reviews: res.data, loading: false });
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to load reviews');
-      set({ loading: false });
-    }
-  },
-
-  createReview: async (data) => {
-    try {
-      const res = await axiosInstance.post('/reviews', data);
-      toast.success('Review submitted');
-      return res.data;
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to submit review');
-    }
-  },
+    fetchReviews: async (artisanId, page = 1, limit = 5) => {
+      set({ loading: true });
+      try {
+        const res = await axiosInstance.get(`/reviews/artisan/${artisanId}`, {
+          params: { page, limit },
+        });
+        set({
+          reviews: res.data.reviews,
+          currentPage: res.data.page,
+          totalPages: res.data.totalPages,
+          loading: false,
+        });
+      } catch (err) {
+        toast.error('Failed to fetch reviews');
+        set({ loading: false });
+      }
+    },
+    postReview: async (artisanId, rating, comment) => {
+      set({ loading: true });
+      try {
+        const res = await axiosInstance.post('/reviews', {
+          artisanId,
+          rating,
+          comment,
+        });
+        set((state) => ({
+          reviews: [res.data.review, ...state.reviews],
+        }));
+        return true;
+      } catch (err) {
+        toast.error(err.response?.data?.message || 'Failed to submit review');
+        set({loading: false})
+      }
+    },
 
   deleteMyReview: async (id) => {
     try {

@@ -30,7 +30,7 @@ export default function Home() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 text-center">
           {[
             {
-              title: 'Verified Artisans',
+              title: 'Approved Artisans',
               desc: 'We ensure only vetted professionals are listed.',
             },
             {

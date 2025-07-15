@@ -10,6 +10,9 @@ export const useJobStore = create((set, get) => ({
   totalJobs: 0,
   currentPage: 1,
   jobError: null,
+  jobPage: 1,
+  jobTotalPages: 1,
+
 
   fetchUserJobs: async (page = 1) => {
     set({ loading: true, jobError: null });
@@ -46,10 +49,12 @@ export const useJobStore = create((set, get) => ({
   cancelJob: async (id) => {
     try {
       await axiosInstance.delete(`/jobs/${id}`);
-      toast.success('Job cancelled');
-      set({ jobs: get().jobs.filter(j => j._id !== id) });
+      toast.success('Job deleted');
+      set((state) => ({
+        jobs: state.jobs.filter(j => j._id !== id),
+      }));
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to cancel job');
+      toast.error(err.response?.data?.message || 'Failed to delete job');
     }
   },
 
@@ -73,14 +78,26 @@ export const useJobStore = create((set, get) => ({
     }
   },
 
-  fetchAllJobs: async () => {
-    set({ loading: true });
+  fetchAllJobs: async (page = 1, status = '', startDate = '', endDate = '') => {
+    set({ jobLoading: true });
+  
+    const query = new URLSearchParams({ page, limit: 10 });
+    if (status) query.append('status', status);
+    if (startDate) query.append('startDate', startDate);
+    if (endDate) query.append('endDate', endDate);
+  
     try {
-      const res = await axiosInstance.get('/jobs/admin/all');
-      set({ jobs: res.data, loading: false });
+      const res = await axiosInstance.get(`/jobs/admin/all?${query.toString()}`);
+      set({
+        jobs: res.data.jobs,
+        jobLoading: false,
+        jobPage: res.data.page,
+        jobTotalPages: res.data.totalPages,
+      });
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to fetch all jobs');
-      set({ loading: false });
+      toast.error('Failed to fetch jobs');
+      set({ jobLoading: false });
     }
-  },
+  }
+,  
 }));
