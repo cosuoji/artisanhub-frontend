@@ -19,7 +19,7 @@ export default function LocationsPanel() {
       const res = await axiosInstance.get('/locations');
       setLocations(res.data);
     } catch {
-      toast.error('Failed to load locations');
+      console.error('Failed to load locations');
     }
   };
 

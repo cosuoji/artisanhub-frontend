@@ -7,7 +7,6 @@ export default function DirectoryFilters({
   setFilters,
   locations,
   onApply,
-  onReset,
   onLocateMe,
 }) {
   const [locationSuggestions, setLocationSuggestions] = useState([]);

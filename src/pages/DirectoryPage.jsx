@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useArtisanStore } from '../store/useArtisanStore';
 import DirectoryFilters from '../components/DirectoryFilters';
 import ArtisanMap from '../components/ArtisanMap';
@@ -21,15 +21,19 @@ export default function DirectoryPage() {
     availableOnly: false,
   });
 
-  useEffect(() => { fetchArtisans(filters, 1); }, []);
-  const debouncedFilters = useDebounce(filters, 500); // 👈 debounce here
+  const listRef = useRef();
 
-    // Auto fetch when debounced filters change (and reset to page 1)
-    useEffect(() => {
-      fetchArtisans({ ...debouncedFilters }, 1);
-    }, [debouncedFilters]);
+  const [mapCenter, setMapCenter] = useState([6.5244, 3.3792]); // default: Lagos
+
+
+  const debouncedFilters = useDebounce(filters, 500);
+
+  useEffect(() => {
+    fetchArtisans({ ...debouncedFilters }, 1);
+  }, [debouncedFilters]);
 
   const [locations, setLocations] = useState([]);
+  const [locationError, setLocationError] = useState(null);
 
   const applyFilters = (customFilters = filters) => {
     const sanitized = {
@@ -38,7 +42,6 @@ export default function DirectoryPage() {
     };
     fetchArtisans(sanitized);
   };
-
 
   const resetFilters = () => {
     clearArtisans();
@@ -49,18 +52,21 @@ export default function DirectoryPage() {
       onlyApproved: false,
       availableOnly: false,
     });
-    fetchArtisans({}, 1); // ✅ fetch all artisans on reset
-   };
+    fetchArtisans({}, 1);
+  };
 
   const handlePageChange = (newPage) => fetchArtisans(filters, newPage);
 
-  
   const locateMe = () => {
     if (!navigator.geolocation) return alert('Geolocation not supported');
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude, longitude } = pos.coords;
-        fetchNearby(latitude, longitude, 10); // radius = 10km
+        fetchNearby(latitude, longitude, 5);
+        setMapCenter([latitude, longitude]);
+        setTimeout(() => {
+          listRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }, 500);
       },
       () => alert('Failed to get location'),
       { enableHighAccuracy: true }
@@ -76,7 +82,7 @@ export default function DirectoryPage() {
   return (
     <div>
       <div className="flex flex-col md:flex-row gap-6">
-      <DirectoryFilters
+        <DirectoryFilters
           filters={filters}
           setFilters={setFilters}
           locations={locations}
@@ -84,15 +90,36 @@ export default function DirectoryPage() {
           onReset={resetFilters}
           onLocateMe={locateMe}
         />
-        <ArtisanMap artisans={artisans} loading={loading} nearbyMode={nearbyMode} />
+        <ArtisanMap
+         artisans={artisans}  
+         mapCenter={mapCenter} // ⬅️ new
+         loading={loading} 
+         nearbyMode={nearbyMode} />
       </div>
 
+      {locationError && (
+        <p className="text-sm text-red-600 mt-2 mb-4 px-4">{locationError}</p>
+      )}
+
+      {nearbyMode && (
+        <div className="bg-blue-50 border border-blue-300 text-blue-700 px-4 py-2 rounded-md mt-4 mb-2 mx-4">
+          Showing artisans near your location.
+          <button
+            onClick={resetFilters}
+            className="ml-3 text-sm text-blue-600 underline"
+          >
+            Reset to full directory
+          </button>
+        </div>
+      )}
+    <div ref={listRef}>
       <ArtisanMapList
         artisans={artisans}
         loading={loading}
         pagination={pagination}
         onPageChange={handlePageChange}
       />
+      </div>
     </div>
   );
 }

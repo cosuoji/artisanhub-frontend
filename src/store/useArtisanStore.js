@@ -10,6 +10,9 @@ export const useArtisanStore = create((set) => ({
   pagination: { page: 1, totalPages: 1 },
   artisan: null,
   locations: [],
+  mapArtisans: [],
+
+  
 
   fetchArtisans: async (filters = {}, page = 1) => {
     set({ loading: true, artisansError: null });
@@ -20,7 +23,7 @@ export const useArtisanStore = create((set) => ({
         limit: 10,
       };
       const res = await axiosInstance.get('/artisans', { params });
-      console.log(res)
+   
       set({
         artisans: res.data.artisans,
         pagination: { page: res.data.page, totalPages: res.data.totalPages },
@@ -36,6 +39,16 @@ export const useArtisanStore = create((set) => ({
       });
     }
   },
+  fetchMapArtisans: async (filters = {}) => {
+    try {
+      const params = { ...filters, limit: 1000 }; // large limit to fetch all
+      const res = await axiosInstance.get('/artisans', { params });
+      set({ mapArtisans: res.data.artisans });
+    } catch (err) {
+      set({ mapArtisans: [] }); // fallback
+    }
+  },
+
 
   fetchArtisan : async (id) => {
     set({ loading: true, artisansError: null });

@@ -16,6 +16,7 @@ function Reviews({ artisanId }) {
 
   const { user } = useAuthStore();
 
+
   useEffect(() => {
     fetchReviews(artisanId);
   }, [artisanId]);

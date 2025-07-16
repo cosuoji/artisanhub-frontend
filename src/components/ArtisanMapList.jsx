@@ -3,21 +3,18 @@ import { useArtisanStore } from '../store/useArtisanStore'
 import { capitalizeWords } from '../utils/capitalize'
 
 
+
 const ArtisanMapList = ({filters}) => {
-  const {fetchArtisans, artisans} = useArtisanStore()  
+  const {fetchArtisans, artisans, pagination} = useArtisanStore()  
     useEffect(() => {
       fetchArtisans();
     }, [filters]);
 
-    const renderStars = (rating = 0) => {
-      const full = Math.floor(rating), empty = 5 - full;
-      return (
-        <>
-          {[...Array(full)].map((_, i) => <span key={i} className="text-yellow-400">★</span>)}
-          {[...Array(empty)].map((_, i) => <span key={i} className="text-gray-300">★</span>)}
-        </>
-      );
+
+    const handlePageChange = (page) => {
+      fetchArtisans(filters, page);
     };
+
  
   return (
     <div className="mt-6">
@@ -30,21 +27,31 @@ const ArtisanMapList = ({filters}) => {
         <div key={artisan._id} className="border rounded p-4 bg-white shadow">
           <h3 className="font-semibold text-charcoal">{artisan.name}</h3>
           <p className="text-sm text-gray-600">{artisan.artisanProfile?.skills?.join(', ')}</p>
-          <p className="text-xs text-gray-500">{capitalizeWords(artisan.artisanProfile?.location?.name)}</p>
+          <p className="text-xs text-gray-500">{capitalizeWords(artisan?.artisanProfile?.location?.name || "")}</p>
           <a
             href={`/artisans/${artisan._id}`}
             className="text-blue-600 text-sm underline mt-2 inline-block"
           >
             View Profile
           </a>
-          <div className="flex items-center">
-          {renderStars(artisan.averageRating)}
-          <span className="text-sm text-gray-500 ml-1">({artisan.reviewCount})</span>
-        </div>
         </div>
       ))}
     </div>
   )}
+  <div className="flex justify-center gap-2 mt-4">
+  {Array.from({ length: pagination.totalPages }, (_, i) => (
+    <button
+      key={i}
+      onClick={() => handlePageChange(i + 1)}
+      className={`px-3 py-1 rounded border ${
+        pagination.page === i + 1 ? 'bg-blue-600 text-white' : 'bg-white'
+      }`}
+    >
+      {i + 1}
+    </button>
+  ))}
+</div>
+
 </div>
   )
 }

@@ -3,7 +3,7 @@ import React from 'react';
 export default function ContactModal({ isOpen, onClose, phone, email, address }) {
   if (!isOpen) return null;
 
-  const whatsappLink = `https://wa.me/${phone.replace(/^0/, '234')}`; // Convert to intl format if needed
+  const whatsappLink = `https://wa.me/${phone?.replace(/^0/, '234')}` // Convert to intl format if needed
 
   return (
     <div className="fixed inset-0 bg-black/40 z-40 flex items-center justify-center">

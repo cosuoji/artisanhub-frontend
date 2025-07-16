@@ -42,10 +42,10 @@ export default function ProfileTab({ user, fetchUserData }) {
   useEffect(() => {
     axiosInstance.get('/locations')
       .then(res => setLocations(res.data))
-      .catch(() => toast.error('Failed to load locations'));
+      .catch(() => console.error('Failed to load locations'));
     axiosInstance.get(`/locations/${user?.artisanProfile?.location}`)
       .then(res => setCurrentLocation(res.data.name))
-      .catch(() => toast.error('Failed to load locations'));
+      .catch(() => console.error('Failed to load locations'));
 
   }, []);
 
@@ -201,7 +201,7 @@ export default function ProfileTab({ user, fetchUserData }) {
             </div>
 
             <select name="location" value={formData.location} onChange={handleChange} className="w-full border p-2 rounded">
-              <option value="">Select location</option>
+              <option value="">Select location(Please Pick One Close to your address)</option>
               {locations.map(loc => (
                 <option key={loc._id || loc} value={loc.name || loc}>{loc.name || loc}</option>
               ))}

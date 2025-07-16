@@ -8,6 +8,7 @@ import Reviews from '../components/ArtisanReviews';
 import ReviewForm from '../components/ReviewForm';
 import ContactModal from '../components/ContactModal';
 import BookingModal from '../components/BookingModal';
+import { useReviewStore } from '../store/reviewStore';
 
 
 export default function ArtisanProfilePage() {
@@ -16,12 +17,18 @@ export default function ArtisanProfilePage() {
   const {loading,fetchArtisan, artisan} = useArtisanStore();
   const [showContact, setShowContact] = useState(false);
   const [showBooking, setShowBooking] = useState(false);
-
-
+  const {
+    reviews,
+    fetchReviews,
+  } = useReviewStore();
 
   useEffect(() => {
     fetchArtisan(id);
   }, [id]);
+
+    useEffect(() => {
+      fetchReviews(id);
+    }, [id]);
 
   if (loading) return <p className="p-6">Loading...</p>;
   if (!artisan) return <p className="p-6 text-red-500">Artisan not found</p>;
@@ -35,7 +42,7 @@ export default function ArtisanProfilePage() {
     isArtisan,
   } = artisan;
 
-  const { bio, skills,address, yearsOfExperience, rating, totalReviews, totalJobsCompleted } = artisanProfile || {};
+  const { bio, skills,address, yearsOfExperience, totalJobsCompleted } = artisanProfile || {};
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded shadow space-y-6">
       {/* Profile Header */}
@@ -85,8 +92,13 @@ export default function ArtisanProfilePage() {
 
       {/* Ratings */}
       <div className="text-sm flex gap-2 items-center">
-        <span className="text-yellow-500">⭐ {rating?.toFixed(1) || 'N/A'}</span>
-        <span>({totalReviews || 0} reviews)</span>
+      {reviews.length > 0 && (
+  <span className="text-sm text-yellow-600 font-medium">
+    ⭐ Average Rating:{" "}
+    {(reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)} / 5
+  </span>
+)}
+        <span>({reviews?.length || 0} reviews)</span>
       </div>
 
       {/* Bio & Skills */}
@@ -109,7 +121,7 @@ export default function ArtisanProfilePage() {
       {/* Location */}
       <div>
         <h2 className="font-semibold">Location</h2>
-         <p className="text-sm">{capitalizeWords(artisan?.artisanProfile?.location?.name) || 'Not specified'}</p> 
+         <p className="text-sm">{capitalizeWords(artisan?.artisanProfile?.location?.name || "Not Specified") || 'Not specified'}</p> 
       </div>
 
       {/* Stats */}
