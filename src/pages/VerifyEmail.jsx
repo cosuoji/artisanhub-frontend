@@ -14,14 +14,15 @@ export default function VerifyEmail() {
     const verify = async () => {
       const result = await verifyEmail(token);
 
-      if (result.success) {
+      if (result.success || result.alreadyVerified) {
         toast.success(result.message);
-        setStatus('✅ Email verified successfully.');
+        setStatus('✅ ' + result.message);
         setTimeout(() => navigate('/login'), 2000);
       } else {
         toast.error(result.message);
         setStatus('⚠️ Verification failed or token is invalid.');
       }
+      
     };
 
     if (token) verify();
