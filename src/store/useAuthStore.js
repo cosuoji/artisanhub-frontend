@@ -66,7 +66,9 @@ export const useAuthStore = create((set, get) => ({
       localStorage.setItem('authUser', JSON.stringify(res.data));
   
       try {
+        await new Promise(res => setTimeout(res, 1000))
         await get().fetchUserData(); // try to fetch profile
+        await axios.get('/test-cookies', { withCredentials: true });
       } catch (err) {
         console.warn("⚠️ Failed to fetch user after signup");
         toast.error("You are signed up, but authentication failed. Please log in.");
