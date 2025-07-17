@@ -1,7 +1,7 @@
 
 import AdminDashboard from '../components/dashboard/AdminDashboard';
-import UserDashboard from '../components/Dashboard/UserDashboard';
-import ArtisanDashboard from '../components/Dashboard/ArtisanDashboard';
+import UserDashboard from '../components/dashboard/UserDashboard';
+import ArtisanDashboard from '../components/dashboard/ArtisanDashboard';
 import { useAuthStore } from '../store/useAuthStore';
 
 export default function Dashboard() {
