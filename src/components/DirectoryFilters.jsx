@@ -10,7 +10,7 @@ export default function DirectoryFilters({
   onLocateMe,
 }) {
   const [locationSuggestions, setLocationSuggestions] = useState([]);
-
+    
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     const updatedFilters = {
@@ -55,29 +55,37 @@ export default function DirectoryFilters({
       {/* Location Autocomplete */}
       <div className="relative">
         <input
-          type="text"
-          name="location"
-          placeholder="Location (e.g. Lekki)"
-          className="border p-2 rounded w-full"
-          value={filters.location}
-          onChange={handleChange}
-          autoComplete="off"
-        />
+            type="text"
+            name="location"
+            placeholder="Location (e.g. Lekki)"
+            className="border p-2 rounded w-full"
+            value={filters.location}
+            onChange={handleChange}
+            onBlur={() => {
+              // Slight delay to allow click on suggestion before hiding
+              setTimeout(() => setLocationSuggestions([]), 100);
+            }}
+            autoComplete="off"
+          />
+
         {locationSuggestions.length > 0 && (
           <ul className="absolute z-10 bg-white border w-full rounded shadow mt-1 max-h-40 overflow-y-auto">
             {locationSuggestions.map((loc) => (
-              <li
-                key={loc._id}
-                className="px-3 py-1 hover:bg-gray-100 cursor-pointer"
-                onClick={() =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    location: capitalizeWords(loc.name),
-                  }))
-                }
-              >
-                {capitalizeWords(loc.name)}
-              </li>
+          <li
+              key={loc._id}
+              className="px-3 py-1 hover:bg-gray-100 cursor-pointer"
+              onMouseDown={() => {
+                setFilters((prev) => ({
+                  ...prev,
+                  location: capitalizeWords(loc.name),
+                }));
+                setLocationSuggestions([]);
+              }}
+
+            >
+              {capitalizeWords(loc.name)}
+            </li>
+
             ))}
           </ul>
         )}
