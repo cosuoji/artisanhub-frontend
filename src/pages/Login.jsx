@@ -3,16 +3,24 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
 import { useRedirect } from '../hooks/useRedirect';
 import toast from 'react-hot-toast';
+// import ReCAPTCHA from 'react-google-recaptcha';
+
 
 export default function Login() {
   const navigate = useNavigate();
   const { login, user, error, loading } = useAuthStore();
   const { redirect } = useRedirect();
+ // const [recaptchaToken, setRecaptchaToken] = useState('');
+
 
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
+
+  // const handleCaptchaChange = (token) => {
+  //   setRecaptchaToken(token);
+  // };
 
   useEffect(() => {
     if (user) {
@@ -27,6 +35,11 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!recaptchaToken) {
+      alert("Please verify you’re not a robot");
+      return;
+    }
+
       try {
         const success = await login(formData);
 
@@ -62,7 +75,11 @@ export default function Login() {
           onChange={handleChange}
           className="w-full border p-2 rounded"
         />
-
+ 
+      {/* <ReCAPTCHA
+        sitekey="your_public_site_key"
+        onChange={handleCaptchaChange}
+      /> */}
         <button
           type="submit"
           disabled={loading}

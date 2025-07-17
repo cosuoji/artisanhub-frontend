@@ -4,11 +4,15 @@ import { useAuthStore } from '../store/useAuthStore';
 import { useRedirect } from '../hooks/useRedirect';
 import { usePasswordValidation } from '../hooks/usePasswordValidation';
 import toast from 'react-hot-toast';
+// import ReCAPTCHA from 'react-google-recaptcha';
+
 
 export default function Signup() {
   const navigate = useNavigate();
   const { user, error, signup, loading } = useAuthStore();
   const { redirect } = useRedirect();
+  // const [recaptchaToken, setRecaptchaToken] = useState('');
+
 
   const [formData, setFormData] = useState({
     name: '',
@@ -34,6 +38,10 @@ export default function Signup() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
+  //  const handleCaptchaChange = (token) => {
+  //   setRecaptchaToken(token);
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -133,6 +141,11 @@ export default function Signup() {
             You’ll be able to complete your artisan profile after signing up.
           </p>
         )}
+
+      {/* <ReCAPTCHA
+        sitekey="your_public_site_key"
+        onChange={handleCaptchaChange}
+      /> */}
 
         <button
           type="submit"
