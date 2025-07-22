@@ -1,19 +1,22 @@
 import React, { useEffect } from 'react'
 import { useArtisanStore } from '../store/useArtisanStore'
 import { capitalizeWords } from '../utils/capitalize'
+import { usePagination } from '../hooks/usePagination';
 
 
 
 const ArtisanMapList = ({filters}) => {
-  const {fetchArtisans, artisans, pagination} = useArtisanStore()  
+  const {fetchArtisans, artisans, mapArtisans, pagination} = useArtisanStore()  
+    const { PageButtons } = usePagination({
+    totalItems: pagination.totalPages * 10,
+     perPage: 10,
+     currentPage: pagination.page,
+     onPageChange: (p) => fetchArtisans(filters, p),
+   });
+
     useEffect(() => {
-      fetchArtisans();
+      fetchArtisans(filters);
     }, [filters]);
-
-
-    const handlePageChange = (page) => {
-      fetchArtisans(filters, page);
-    };
 
  
   return (
@@ -23,7 +26,7 @@ const ArtisanMapList = ({filters}) => {
     <p>No artisans found</p>
   ) : (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {artisans?.map((artisan) => (
+      {mapArtisans?.map((artisan) => (
         <div key={artisan._id} className="border rounded p-4 bg-white shadow">
           <h3 className="font-semibold text-charcoal">{artisan.name}</h3>
           <p className="text-sm text-gray-600">{artisan.artisanProfile?.skills?.join(', ')}</p>
@@ -38,19 +41,7 @@ const ArtisanMapList = ({filters}) => {
       ))}
     </div>
   )}
-  <div className="flex justify-center gap-2 mt-4">
-  {Array.from({ length: pagination.totalPages }, (_, i) => (
-    <button
-      key={i}
-      onClick={() => handlePageChange(i + 1)}
-      className={`px-3 py-1 rounded border ${
-        pagination.page === i + 1 ? 'bg-blue-600 text-white' : 'bg-white'
-      }`}
-    >
-      {i + 1}
-    </button>
-  ))}
-</div>
+<PageButtons />
 
 </div>
   )

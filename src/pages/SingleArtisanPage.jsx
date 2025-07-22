@@ -30,7 +30,7 @@ export default function ArtisanProfilePage() {
       fetchReviews(id);
     }, [id]);
 
-  if (loading) return <p className="p-6">Loading...</p>;
+  if (loading) return <div className="animate-pulse bg-gray-300 h-4 rounded w-3/4"></div>
   if (!artisan) return <p className="p-6 text-red-500">Artisan not found</p>;
 
   const {
@@ -75,6 +75,7 @@ export default function ArtisanProfilePage() {
         </button>
 
         <BookingModal
+        aria-modal="true" role="dialog"
             artisanId={artisan._id}
             isOpen={showBooking}
             onClose={() => setShowBooking(false)}

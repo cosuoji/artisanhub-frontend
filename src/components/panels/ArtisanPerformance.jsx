@@ -5,11 +5,13 @@ import { MdWork, MdStar, MdRateReview, MdAccessTime } from 'react-icons/md';
 export default function PerformanceStats() {
   const [stats, setStats] = useState(null);
 
+  
   useEffect(() => {
     axiosInstance.get('/artisans/me/stats')
       .then(res => setStats(res.data))
       .catch(() => console.error('Failed to load stats'));
   }, []);
+
 
   if (!stats) return <p>Loading stats...</p>;
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import Modal from './Modal';
 
 export default function ContactModal({ isOpen, onClose, phone, email, address }) {
   if (!isOpen) return null;
@@ -6,15 +7,7 @@ export default function ContactModal({ isOpen, onClose, phone, email, address })
   const whatsappLink = `https://wa.me/${phone?.replace(/^0/, '234')}` // Convert to intl format if needed
 
   return (
-    <div className="fixed inset-0 bg-black/40 z-40 flex items-center justify-center">
-      <div className="bg-white p-6 rounded shadow-lg w-[90%] max-w-sm relative z-50">
-        <button
-          onClick={onClose}
-          className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-lg"
-        >
-          ✖
-        </button>
-
+    <Modal isOpen={isOpen} onClose={onClose} className="w-[90%] max-w-sm p-6">
         <h2 className="text-lg font-semibold mb-4 text-charcoal">Contact Artisan</h2>
 
         <div className="space-y-3 text-sm">
@@ -60,7 +53,6 @@ export default function ContactModal({ isOpen, onClose, phone, email, address })
             </a>
           </div>
         </div>
-      </div>
-    </div>
+     </Modal>
   );
 }

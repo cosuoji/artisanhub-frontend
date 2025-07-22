@@ -45,7 +45,6 @@ export const useAuthStore = create((set, get) => ({
         _shouldRetry: false,
       });
   
-      localStorage.setItem('authUser', JSON.stringify(res.data.user));
       await get().fetchUserData();
       set({ loading: false });
       return true;
@@ -62,22 +61,20 @@ export const useAuthStore = create((set, get) => ({
     set({ loading: true });
     try {
       const res = await axiosInstance.post('/auth/signup', formData, { withCredentials: true });
-  
-      localStorage.setItem('authUser', JSON.stringify(res.data));
-  
+    
       try {
         await new Promise(res => setTimeout(res, 1000))
         await get().fetchUserData(); // try to fetch profile
         await axios.get('/test-cookies', { withCredentials: true });
       } catch (err) {
         console.warn("⚠️ Failed to fetch user after signup");
-        toast.error("You are signed up, but authentication failed. Please log in.");
+        //toast.error("You are signed up, but authentication failed. Please log in.");
         return false;
       }
         set({ loading: false });
       return true;
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Signup failed');
+      //toast.error(err.response?.data?.message || 'Signup failed');
       set({ loading: false });
       return false;
     }
@@ -88,7 +85,6 @@ export const useAuthStore = create((set, get) => ({
       await axiosInstance.post('/auth/logout');
     } catch (_) {}
 
-    localStorage.removeItem('authUser');
     set({ user: null });
   },
 

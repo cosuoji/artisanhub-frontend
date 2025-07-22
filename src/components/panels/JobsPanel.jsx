@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useJobStore } from '../../store/useJobStore';
 import JobDetailsModal from '../panels/JobDetailsModal';
+import { usePagination } from '../../hooks/usePagination';
+
+
 
 export default function JobsPanel() {
   const {
@@ -14,6 +17,12 @@ export default function JobsPanel() {
 
   } = useJobStore();
 
+    const { PageButtons } = usePagination({
+    totalItems: jobTotalPages * 10,
+     perPage: 10,
+     currentPage: jobPage,
+     onPageChange: (p) => fetchAllJobs(p, status, startDate, endDate),
+   });
   const [status, setStatus] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -81,15 +90,15 @@ export default function JobsPanel() {
               <tr>
                 <td colSpan="5" className="p-4">Loading jobs...</td>
               </tr>
-            ) : jobs.length === 0 ? (
+            ) : jobs?.length === 0 ? (
               <tr>
                 <td colSpan="5" className="p-4 text-gray-500">No jobs found.</td>
               </tr>
             ) : (
-              jobs.map((job) => (
+              jobs?.map((job) => (
                 <tr key={job._id} className="border-b">
-                  <td className="p-3">{job.user?.name || 'Unknown'}</td>
-                  <td className="p-3">{job.artisan?.name || 'Unassigned'}</td>
+                  <td className="p-3">{job.user?.email || 'Unknown'}</td>
+                  <td className="p-3">{job.artisan?.email || 'Unassigned'}</td>
                   <td className="p-3 capitalize">
                     <span className={`text-sm font-medium px-2 py-1 rounded 
                       ${job.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
@@ -129,22 +138,7 @@ export default function JobsPanel() {
       </div>
 
       {/* Pagination */}
-      {jobTotalPages > 1 && (
-        <div className="flex gap-2 mt-4 flex-wrap">
-          {[...Array(jobTotalPages)].map((_, i) => (
-            <button
-              key={i}
-              onClick={() => fetchAllJobs(i + 1, status, startDate, endDate)}
-              className={`px-3 py-1 border rounded ${
-                jobPage === i + 1 ? 'bg-blue-600 text-white' : 'bg-white text-charcoal'
-              }`}
-            >
-              {i + 1}
-            </button>
-          ))}
-        </div>
-      )}
-
+      <PageButtons />
       {/* Job Details Modal */}
       {selectedJob && (
         <JobDetailsModal job={selectedJob} onClose={() => setSelectedJob(null)} />

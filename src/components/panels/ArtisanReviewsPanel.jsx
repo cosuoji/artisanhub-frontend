@@ -3,6 +3,8 @@ import { useEffect } from 'react';
 import { useReviewStore } from '../../store/reviewStore';
 import { format } from 'date-fns';
 import { useAuthStore } from '../../store/useAuthStore';
+import { usePagination } from '../../hooks/usePagination';
+
 
 export default function ArtisanReviewPanel() {
   const { reviews, loading, fetchReviews, page, totalPages } = useReviewStore();
@@ -12,6 +14,13 @@ export default function ArtisanReviewPanel() {
   useEffect(() => {
     fetchReviews(user?._id);
   }, []);
+
+    const { PageButtons } = usePagination({
+    totalItems: totalPages * 10,
+     perPage: 10,
+     currentPage: page,
+     onPageChange: (p) => fetchReviews(user?._id, p),
+   });
 
 
   return (
@@ -42,21 +51,7 @@ export default function ArtisanReviewPanel() {
           </div>
 
           {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex gap-2 mt-4">
-              {[...Array(totalPages)].map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => getMyReviews(i + 1)}
-                  className={`px-3 py-1 border rounded ${
-                    page === i + 1 ? 'bg-blue-600 text-white' : 'bg-white text-charcoal'
-                  }`}
-                >
-                  {i + 1}
-                </button>
-              ))}
-            </div>
-          )}
+          <PageButtons />
         </>
       )}
     </div>

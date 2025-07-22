@@ -28,6 +28,8 @@ const isPublicRoute = (url) => {
   });
 };
 
+
+
 export const setupAxiosInterceptor = () => {
   axiosInstance.interceptors.response.use(
     res => res,
@@ -62,5 +64,7 @@ export const setupAxiosInterceptor = () => {
   );
 };
 
+if (!axiosInstance.interceptors.response.handlers.length)
+setupAxiosInterceptor();
 
 export { axiosInstance as default};

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import axiosInstance from '../api/axios';
+import Modal from "./Modal"
 
 export default function BookingModal({ artisanId, isOpen, onClose }) {
   const [description, setDescription] = useState('');
@@ -32,15 +33,7 @@ export default function BookingModal({ artisanId, isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 z-40 flex items-center justify-center">
-      <div className="bg-white p-6 rounded shadow-lg w-[90%] max-w-md relative z-50">
-        <button
-          onClick={onClose}
-          className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-lg"
-        >
-          ✖
-        </button>
-
+   <Modal isOpen={isOpen} onClose={onClose} className="w-[90%] max-w-md p-6">
         <h2 className="text-lg font-semibold text-charcoal mb-4">Book This Artisan</h2>
 
         <div className="space-y-4">
@@ -55,6 +48,7 @@ export default function BookingModal({ artisanId, isOpen, onClose }) {
           <input
             type="date"
             value={date}
+            min={new Date().toISOString().split('T')[0]}
             onChange={(e) => setDate(e.target.value)}
             className="border p-2 rounded w-full"
           />
@@ -67,7 +61,6 @@ export default function BookingModal({ artisanId, isOpen, onClose }) {
             {loading ? 'Sending...' : 'Book Now'}
           </button>
         </div>
-      </div>
-    </div>
+      </Modal>
   );
 }

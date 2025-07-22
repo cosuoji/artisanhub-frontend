@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { HiMenu, HiX } from 'react-icons/hi';
 import { useAuthStore } from '../store/useAuthStore';
+import { useDarkMode } from '../hooks/useDarkMode';
+
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -11,10 +13,14 @@ export default function Header() {
   const toggleMenu = () => setMenuOpen((prev) => !prev);
   const closeMenu = () => setMenuOpen(false);
 
+  useEffect(() => closeMenu(), [location])
+
   const handleLogout = () => {
     logout();
     navigate('/');
   };
+
+  const [dark, toggle] = useDarkMode();
 
   return (
     <header className="bg-white shadow-md sticky top-0 z-50">
@@ -23,6 +29,9 @@ export default function Header() {
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex space-x-6 items-center">
+            {/* <button onClick={toggle} className="ml-4">
+            {dark ? '🌞' : '🌙'}
+          </button> */}
           <Link to="/directory" className="text-[#1F2937] hover:text-[#1E3A8A] font-medium">Directory</Link>
 
           {user ? (
@@ -58,6 +67,9 @@ export default function Header() {
       {menuOpen && (
         <div className="md:hidden bg-white border-t">
           <nav className="flex flex-col space-y-4 px-6 py-4">
+          {/* <button onClick={toggle} className="ml-4">
+            {dark ? '🌞' : '🌙'}
+          </button> */}
             <Link to="/directory" onClick={closeMenu} className="text-[#1F2937] hover:text-[#1E3A8A]">Directory</Link>
 
             {user ? (

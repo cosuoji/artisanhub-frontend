@@ -12,8 +12,7 @@ export const useArtisanStore = create((set) => ({
   locations: [],
   mapArtisans: [],
 
-  
-
+  // Fetch for list view (with full filtering)
   fetchArtisans: async (filters = {}, page = 1) => {
     set({ loading: true, artisansError: null });
     try {
@@ -26,7 +25,10 @@ export const useArtisanStore = create((set) => ({
    
       set({
         artisans: res.data.artisans,
-        pagination: { page: res.data.page, totalPages: res.data.totalPages },
+        pagination: { 
+          page: res.data.page, 
+          totalPages: res.data.totalPages 
+        },
         lastFilters: filters,
         nearbyMode: false,
         loading: false,
@@ -39,18 +41,31 @@ export const useArtisanStore = create((set) => ({
       });
     }
   },
+
+  // Fetch for map view (only location filter + coordinates)
   fetchMapArtisans: async (filters = {}) => {
     try {
-      const params = { ...filters, limit: 1000 }; // large limit to fetch all
-      const res = await axiosInstance.get('/artisans', { params });
-      set({ mapArtisans: res.data.artisans });
-    } catch (err) {
-      set({ mapArtisans: [] }); // fallback
+      const res = await axiosInstance.get('/artisans/map', { 
+        params: {
+          // Only pass location filter to map endpoint
+          location: filters.location 
+        }
+      });
+      set({
+        mapArtisans: res.data.artisans,
+        loading: false,
+      });
+    } catch (error) {
+      console.error("Error fetching map artisans:", error);
+      set({
+        mapArtisans: [],
+        loading: false,
+      });
     }
   },
 
-
-  fetchArtisan : async (id) => {
+  // Existing methods remain unchanged
+  fetchArtisan: async (id) => {
     set({ loading: true, artisansError: null });
     try {
       const res = await axiosInstance.get(`/artisans/${id}`);
@@ -58,7 +73,7 @@ export const useArtisanStore = create((set) => ({
         artisan: res.data,
         loading: false,
       });
-    } catch (err){
+    } catch (err) {
       set({
         artisansError: err.response?.data?.message || 'Failed to load artisan',
         loading: false,
@@ -66,11 +81,12 @@ export const useArtisanStore = create((set) => ({
     }
   },
 
-
   fetchNearby: async (lat, lng, radius = 10) => {
     set({ loading: true, artisansError: null });
     try {
-      const res = await axiosInstance.get('/artisans/nearby', { params: { lat, lng, radius } });
+      const res = await axiosInstance.get('/artisans/nearby', { 
+        params: { lat, lng, radius } 
+      });
       set({
         artisans: res.data.artisans,
         nearbyMode: true,
@@ -94,4 +110,3 @@ export const useArtisanStore = create((set) => ({
     pagination: { page: 1, totalPages: 1 },
   }),
 }));
-

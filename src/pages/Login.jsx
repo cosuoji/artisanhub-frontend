@@ -1,22 +1,22 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../store/useAuthStore';
 import { useRedirect } from '../hooks/useRedirect';
 import toast from 'react-hot-toast';
-// import ReCAPTCHA from 'react-google-recaptcha';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { loginSchema } from '../utils/schemas';
+import { useAuthStore } from '../store/useAuthStore';
 
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login, user, error, loading } = useAuthStore();
-  const { redirect } = useRedirect();
- // const [recaptchaToken, setRecaptchaToken] = useState('');
+  const { login, user, loading } = useAuthStore();
+  const { register, handleSubmit, formState: { errors, isSubmitting } } =
+    useForm({ resolver: zodResolver(loginSchema) });
 
-
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
+  const onSubmit = async (data) => {
+    await login(data);
+  };
 
   // const handleCaptchaChange = (token) => {
   //   setRecaptchaToken(token);
@@ -28,66 +28,22 @@ export default function Login() {
     }
   }, [user]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!recaptchaToken) {
-      alert("Please verify you’re not a robot");
-      return;
-    }
-
-      try {
-        const success = await login(formData);
-
-        if (success) {
-          toast.success('Welcome Back!');
-          redirect();
-        }
-      } catch (err) {
-        toast.error(err.message || 'An error occurred');
-      }
-  };
 
   return (
     <div className="max-w-md mx-auto mt-10 bg-white p-8 rounded shadow">
       <h2 className="text-2xl font-bold text-[#1F2937] mb-6 text-center">Login</h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          name="email"
-          type="email"
-          placeholder="Email"
-          required
-          value={formData.email}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-        />
-        <input
-          name="password"
-          type="password"
-          placeholder="Password"
-          required
-          value={formData.password}
-          onChange={handleChange}
-          className="w-full border p-2 rounded"
-        />
- 
-      {/* <ReCAPTCHA
-        sitekey="your_public_site_key"
-        onChange={handleCaptchaChange}
-      /> */}
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-[#1E3A8A] text-white py-2 rounded hover:bg-blue-800"
-        >
-          {loading ? 'Logging in...' : 'Login'}
-        </button>
-      </form>
+  <form onSubmit={handleSubmit(onSubmit)} className="max-w-md mx-auto space-y-4">
+      <input {...register('email')} type="email" placeholder="Email" className="w-full border p-2" />
+      {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
+
+      <input {...register('password')} type="password" placeholder="Password" className="w-full border p-2" />
+      {errors.password && <p className="text-sm text-red-600">{errors.password.message}</p>}
+
+      <button disabled={isSubmitting} className="w-full bg-blue-600 text-white py-2 rounded">
+        {isSubmitting ? 'Logging in…' : 'Login'}
+      </button>
+    </form>
 
       <div className="text-sm text-center mt-4">
         Don’t have an account?{' '}

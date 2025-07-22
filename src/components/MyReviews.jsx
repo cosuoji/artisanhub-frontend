@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useReviewStore } from '../store/reviewStore';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
+import { usePagination } from '../hooks/usePagination';
 
 export default function MyReviews() {
   const {
@@ -23,8 +24,14 @@ export default function MyReviews() {
     }
   };
 
+  const { PageButtons } = usePagination({
+  totalItems: totalPages * 10, // simple proxy for total
+     perPage: 10,
+     currentPage,
+     onPageChange: fetchMyReviews,
+   });
 
-  if (loading) return <p>Loading reviews...</p>;
+  if (loading) return <div className="animate-pulse bg-gray-300 h-4 rounded w-3/4"></div>
 
   return (
     <section className="bg-white p-6 rounded-md shadow">
@@ -66,25 +73,7 @@ export default function MyReviews() {
           </ul>
 
           {/* Pagination */}
-          <div className="flex items-center justify-center mt-6 gap-4">
-            <button
-              disabled={currentPage === 1}
-              onClick={() => handlePageChange(currentPage - 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50"
-            >
-              Prev
-            </button>
-            <span className="text-sm text-gray-600">
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              disabled={currentPage === totalPages}
-              onClick={() => handlePageChange(currentPage + 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50"
-            >
-              Next
-            </button>
-          </div>
+          <PageButtons />
         </>
       )}
     </section>

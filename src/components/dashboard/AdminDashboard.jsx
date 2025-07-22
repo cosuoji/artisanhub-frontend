@@ -4,6 +4,8 @@ import AnalyticsPanel from '../panels/AnalyticsPanel';
 import UsersPanel from '../panels/UsersPanel';
 import JobsPanel from '../panels/JobsPanel';
 import LocationsPanel from '../panels/LocationsPanel';
+import ErrorBoundaryClass from '../ErrorBoundary';
+
 
 const tabs = ['Analytics', 'Users', 'Job Management', 'Locations'];
 
@@ -26,10 +28,10 @@ export default function AdminDashboard() {
         ))}
       </div>
 
-      {activeTab === 'Analytics' && <AnalyticsPanel />}
-      {activeTab === 'Users' && <UsersPanel />}
-      {activeTab === 'Job Management'  && <JobsPanel />}
-      {activeTab === 'Locations' && <LocationsPanel />}
+      {activeTab === 'Analytics' && <ErrorBoundaryClass><AnalyticsPanel /></ErrorBoundaryClass>}
+      {activeTab === 'Users' && <ErrorBoundaryClass><UsersPanel /></ErrorBoundaryClass>}
+      {activeTab === 'Job Management'  && <ErrorBoundaryClass><JobsPanel /></ErrorBoundaryClass>}
+      {activeTab === 'Locations' && <ErrorBoundaryClass><LocationsPanel /></ErrorBoundaryClass>}
 
     </div>
   );

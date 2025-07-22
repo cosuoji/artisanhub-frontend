@@ -6,12 +6,23 @@ import ArtisanMapList from '../components/ArtisanMapList';
 import { useDebounce } from '../hooks/useDebounce';
 import axiosInstance from '../api/axios';
 
-
 export default function DirectoryPage() {
   const {
-    artisans, loading, pagination, nearbyMode,
-    fetchArtisans, fetchNearby, clearArtisans
+    artisans, 
+    loading, 
+    pagination, 
+    nearbyMode,
+    mapArtisans,
+    fetchArtisans, 
+    fetchNearby, 
+    fetchMapArtisans,  
+    clearArtisans
   } = useArtisanStore();
+
+  const [locations, setLocations] = useState([]);
+  const [locationError, setLocationError] = useState(null);
+  const [mapCenter, setMapCenter] = useState([6.5244, 3.3792]);
+  const listRef = useRef();
 
   const [filters, setFilters] = useState({
     skill: '',
@@ -21,26 +32,25 @@ export default function DirectoryPage() {
     availableOnly: false,
   });
 
-  const listRef = useRef();
-
-  const [mapCenter, setMapCenter] = useState([6.5244, 3.3792]); // default: Lagos
-
-
   const debouncedFilters = useDebounce(filters, 500);
 
   useEffect(() => {
-    fetchArtisans({ ...debouncedFilters }, 1);
+    // Fetch filtered list with all filters
+    fetchArtisans(debouncedFilters, 1);
+    
+    // Fetch map data with ONLY location filter
+    fetchMapArtisans({ 
+      location: debouncedFilters.location 
+    });
   }, [debouncedFilters]);
-
-  const [locations, setLocations] = useState([]);
-  const [locationError, setLocationError] = useState(null);
 
   const applyFilters = (customFilters = filters) => {
     const sanitized = {
       ...customFilters,
       skill: customFilters.skill?.toLowerCase() || '',
+      minYears: customFilters.minYears || '',
     };
-    fetchArtisans(sanitized);
+    setFilters(sanitized);
   };
 
   const resetFilters = () => {
@@ -52,7 +62,7 @@ export default function DirectoryPage() {
       onlyApproved: false,
       availableOnly: false,
     });
-    fetchArtisans({}, 1);
+    setMapCenter([6.5244, 3.3792]); // Reset to default center
   };
 
   const handlePageChange = (newPage) => fetchArtisans(filters, newPage);
@@ -91,10 +101,12 @@ export default function DirectoryPage() {
           onLocateMe={locateMe}
         />
         <ArtisanMap
-         artisans={artisans}  
+         artisans={mapArtisans}  
          mapCenter={mapCenter} // ⬅️ new
          loading={loading} 
+          filters={debouncedFilters}
          nearbyMode={nearbyMode} />
+        
       </div>
 
       {locationError && (

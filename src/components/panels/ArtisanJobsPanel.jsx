@@ -12,7 +12,7 @@ export default function ArtisanJobPanel() {
     fetchArtisanJobs(); // for artisan this returns jobs assigned to them
   }, []);
 
-  if (jobLoading) return <p className="p-6 text-charcoal">Loading your jobs...</p>;
+  if (jobLoading) return <div className="animate-pulse bg-gray-300 h-4 rounded w-3/4"></div>
 
   return (
     <div className="space-y-4">

@@ -25,7 +25,7 @@ function Reviews({ artisanId }) {
     fetchReviews(artisanId, page);
   };
 
-  if (loading) return <p>Loading reviews...</p>;
+  if (loading) return <div className="animate-pulse bg-gray-300 h-4 rounded w-3/4"></div>
   if (error) return <p className="text-red-500">{error}</p>;
   if (!reviews.length) return <p className="text-sm text-gray-500">No reviews yet.</p>;
 

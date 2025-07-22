@@ -1,49 +1,29 @@
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { profileSchema } from '../utils/schemas';
 import { useAuthStore } from '../store/useAuthStore';
 
 export default function UpdateProfileForm() {
   const { user, updateProfile } = useAuthStore();
-  const [phone, setPhone] = useState(user?.phone || '');
-  const [address, setAddress] = useState(user?.address || '');
-  const [loading, setLoading] = useState(false);
+  const { register, handleSubmit, formState: { errors, isSubmitting } } =
+    useForm({ resolver: zodResolver(profileSchema), defaultValues: { phone: user?.phone || '', address: user?.address || '' } });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    const success = await updateProfile({ phone, address });
-    setLoading(false);
-    if (success) {
-      // Optionally clear fields or show confirmation
-    }
+  const onSubmit = async (data) => {
+    await updateProfile(data);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label className="block text-sm font-medium text-charcoal">Phone Number</label>
-        <input
-          type="text"
-          className="mt-1 block w-full border rounded px-3 py-2"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-        />
-      </div>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <label className="block text-sm font-medium">Phone</label>
+      <input type="tel" {...register('phone')} className="w-full border p-2" />
+      {errors.phone && <p className="text-sm text-red-600">{errors.phone.message}</p>}
 
-      <div>
-        <label className="block text-sm font-medium text-charcoal">Address</label>
-        <textarea
-          className="mt-1 block w-full border rounded px-3 py-2"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-        />
-      </div>
+      <label className="block text-sm font-medium">Address</label>
+      <textarea {...register('address')} rows={3} className="w-full border p-2" />
+      {errors.address && <p className="text-sm text-red-600">{errors.address.message}</p>}
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
-      >
-        {loading ? 'Updating...' : 'Update Profile'}
+      <button disabled={isSubmitting} className="bg-blue-600 text-white px-4 py-2 rounded">
+        {isSubmitting ? 'Updating…' : 'Update Profile'}
       </button>
     </form>
   );

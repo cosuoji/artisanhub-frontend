@@ -15,6 +15,8 @@ import ForgotPassword from './pages/ForgotPassword.jsx';
 import ResetPassword from './pages/ResetPassword.jsx';
 import SingleArtisanPage from './pages/SingleArtisanPage.jsx';
 import CookieConsentBanner from './components/CookieConsentBanner.jsx';
+import Terms from './pages/Terms.jsx';
+import Privacy from './pages/Privacy.jsx';
 
 export default function App() {
   const init = useAuthStore((state) => state.init);
@@ -35,12 +37,15 @@ export default function App() {
           <Route path="/artisans/:id" element={<SingleArtisanPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
           <Route path="/theme-preview" element={<ThemePreview />} />
           <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
           <Route path="/resend-verification" element={<ResendVerification />} />
           <Route path="/verify-email/:token" element={<VerifyEmail />} />
           <Route path="/forgot-password" element={!user ? <ForgotPassword /> : <Navigate to="/dashboard" />} />
           <Route path="/reset-password/:token" element={!user ? <ResetPassword /> : <Navigate to="/dashboard" />} />
+
         </Route>
       </Routes>
     </Router>

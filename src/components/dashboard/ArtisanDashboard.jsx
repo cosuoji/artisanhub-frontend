@@ -9,6 +9,9 @@ import ProfileTab from '../panels/ArtisanProfileTab';
 import { AnimatePresence, motion } from 'framer-motion';
 import ArtisanUpdateProfileTab from '../panels/ArtisanUpdateProfileTab';
 import PerformanceStats from '../panels/ArtisanPerformance';
+import ErrorBoundaryClass from '../ErrorBoundary';
+
+
 
 
 
@@ -61,12 +64,12 @@ export default function ArtisanDashboard() {
     >
       {
         [
-          <ProfileTab key="profile" user={user} fetchUserData={fetchUserData} />,
-          <ArtisanJobsPanel key="jobs" />,
-          <ArtisanReviewsPanel key="reviews" />,
-          <ArtisanPortfolioSection key="portfolio" profile={user.artisanProfile} refreshProfile={fetchUserData} />,
-          <PerformanceStats key="performance" />,
-          <ArtisanUpdateProfileTab key="security"/>
+          <ErrorBoundaryClass><ProfileTab key="profile" user={user} fetchUserData={fetchUserData} /></ErrorBoundaryClass>,
+          <ErrorBoundaryClass><ArtisanJobsPanel key="jobs" /></ErrorBoundaryClass>,
+          <ErrorBoundaryClass><ArtisanReviewsPanel key="reviews" /></ErrorBoundaryClass>,
+          <ErrorBoundaryClass><ArtisanPortfolioSection key="portfolio" profile={user.artisanProfile} refreshProfile={fetchUserData} /></ErrorBoundaryClass>,
+          <ErrorBoundaryClass><PerformanceStats key="performance" /></ErrorBoundaryClass>,
+          <ErrorBoundaryClass><ArtisanUpdateProfileTab key="security"/></ErrorBoundaryClass>
         ][profileTab]
       }
     </motion.div>

@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useJobStore } from '../store/useJobStore';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
+import { usePagination } from '../hooks/usePagination';
 
 
 function MyBookings() {
@@ -11,13 +12,12 @@ function MyBookings() {
     fetchUserJobs(1);
   }, []);
 
-  const totalPages = Math.ceil(totalJobs / 10);
-
-  const goToPage = (page) => {
-    if (page >= 1 && page <= totalPages) {
-      fetchUserJobs(page);
-    }
-  };
+  const { PageButtons } = usePagination({
+     totalItems: totalJobs,
+     perPage: 10,
+     currentPage,
+     onPageChange: fetchUserJobs,
+});
 
   
   const getStatusColor = (status) => {
@@ -35,7 +35,7 @@ function MyBookings() {
     }
   };
 
-  if (loading) return <p>Loading jobs...</p>;
+  if (loading) return <div className="animate-pulse bg-gray-300 h-4 rounded w-3/4"></div>
 
 
   return (
@@ -92,25 +92,7 @@ function MyBookings() {
           </div>
 
           {/* Pagination */}
-          <div className="flex justify-between mt-4 text-sm">
-            <button
-              onClick={() => goToPage(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-            >
-              Previous
-            </button>
-            <p>
-              Page {currentPage} of {totalPages}
-            </p>
-            <button
-              onClick={() => goToPage(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
-            >
-              Next
-            </button>
-          </div>
+          <PageButtons />
         </>
       )}
     </section>
