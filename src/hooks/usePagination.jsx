@@ -21,7 +21,7 @@ export function usePagination({
       >
         Prev
       </button>
-
+{/* 
       {pages.map((p) => (
         <button
           key={p}
@@ -32,7 +32,7 @@ export function usePagination({
         >
           {p}
         </button>
-      ))}
+      ))} */}
 
       <button
         onClick={() => onPageChange(currentPage + 1)}

@@ -17,6 +17,7 @@ import SingleArtisanPage from './pages/SingleArtisanPage.jsx';
 import CookieConsentBanner from './components/CookieConsentBanner.jsx';
 import Terms from './pages/Terms.jsx';
 import Privacy from './pages/Privacy.jsx';
+import Favourites from './pages/Favourites.jsx';
 
 export default function App() {
   const init = useAuthStore((state) => state.init);
@@ -29,7 +30,6 @@ export default function App() {
   return (
     <Router>
       <CookieConsentBanner />
-
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
@@ -39,13 +39,13 @@ export default function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
+          <Route path='favourites' element={<Favourites />} />
           <Route path="/theme-preview" element={<ThemePreview />} />
           <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
           <Route path="/resend-verification" element={<ResendVerification />} />
           <Route path="/verify-email/:token" element={<VerifyEmail />} />
           <Route path="/forgot-password" element={!user ? <ForgotPassword /> : <Navigate to="/dashboard" />} />
           <Route path="/reset-password/:token" element={!user ? <ResetPassword /> : <Navigate to="/dashboard" />} />
-
         </Route>
       </Routes>
     </Router>

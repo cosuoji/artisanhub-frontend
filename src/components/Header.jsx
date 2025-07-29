@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { HiMenu, HiX } from 'react-icons/hi';
 import { useAuthStore } from '../store/useAuthStore';
-import { useDarkMode } from '../hooks/useDarkMode';
 
 
 export default function Header() {
@@ -20,8 +19,6 @@ export default function Header() {
     navigate('/');
   };
 
-  const [dark, toggle] = useDarkMode();
-
   return (
     <header className="bg-white shadow-md sticky top-0 z-50">
       <div className="container mx-auto flex justify-between items-center py-4 px-6">
@@ -29,11 +26,9 @@ export default function Header() {
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex space-x-6 items-center">
-            {/* <button onClick={toggle} className="ml-4">
-            {dark ? '🌞' : '🌙'}
-          </button> */}
           <Link to="/directory" className="text-[#1F2937] hover:text-[#1E3A8A] font-medium">Directory</Link>
-
+          <Link to="/favourites" className="text-[#1F2937] hover:text-[#1E3A8A] font-medium">Favourites</Link>
+          
           {user ? (
             <>
               <Link to="/dashboard" className="text-[#1F2937] hover:text-[#1E3A8A] font-medium">Dashboard</Link>
@@ -67,10 +62,8 @@ export default function Header() {
       {menuOpen && (
         <div className="md:hidden bg-white border-t">
           <nav className="flex flex-col space-y-4 px-6 py-4">
-          {/* <button onClick={toggle} className="ml-4">
-            {dark ? '🌞' : '🌙'}
-          </button> */}
             <Link to="/directory" onClick={closeMenu} className="text-[#1F2937] hover:text-[#1E3A8A]">Directory</Link>
+            <Link to="/favourites" onClick={closeMenu} className="text-[#1F2937] hover:text-[#1E3A8A]">Favourites</Link>
 
             {user ? (
               <>

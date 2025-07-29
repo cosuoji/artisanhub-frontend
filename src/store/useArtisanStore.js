@@ -11,58 +11,41 @@ export const useArtisanStore = create((set) => ({
   artisan: null,
   locations: [],
   mapArtisans: [],
+  nearby: [],
+  lat: null,
+  lng: null,
+  radius: null,
 
-  // Fetch for list view (with full filtering)
-  fetchArtisans: async (filters = {}, page = 1) => {
-    set({ loading: true, artisansError: null });
-    try {
-      const params = {
-        ...filters,
+
+// useArtisanStore.js
+// useArtisanStore.js
+fetchArtisans: async (filters = {}, page = 1) => {
+  set({ loading: true });
+  try {
+    const res = await axiosInstance.get('/artisans', {
+      params: { page, limit: 10, ...filters, skill: filters.skill || undefined },
+    });
+    console.log('Fetched artisans:', res.data.artisans.length);
+
+    set({
+      artisans: res.data.artisans,
+      pagination: {
         page,
-        limit: 10,
-      };
-      const res = await axiosInstance.get('/artisans', { params });
-   
-      set({
-        artisans: res.data.artisans,
-        pagination: { 
-          page: res.data.page, 
-          totalPages: res.data.totalPages 
-        },
-        lastFilters: filters,
-        nearbyMode: false,
-        loading: false,
-      });
-    } catch (err) {
-      set({
-        artisans: [],
-        artisansError: err.response?.data?.message || 'Failed to load artisans',
-        loading: false,
-      });
-    }
-  },
+        total: res.data.total,
+        totalPages: res.data.totalPages
+      },
+      loading: false
+    });
+  } catch {
+    set({ loading: false }); // ← critical
+  }
+},
 
-  // Fetch for map view (only location filter + coordinates)
-  fetchMapArtisans: async (filters = {}) => {
-    try {
-      const res = await axiosInstance.get('/artisans/map', { 
-        params: {
-          // Only pass location filter to map endpoint
-          location: filters.location 
-        }
-      });
-      set({
-        mapArtisans: res.data.artisans,
-        loading: false,
-      });
-    } catch (error) {
-      console.error("Error fetching map artisans:", error);
-      set({
-        mapArtisans: [],
-        loading: false,
-      });
-    }
-  },
+fetchMapArtisans: async (filters = {}) => {
+  const params = { mapOnly: true, ...filters, skill: filters.skill || undefined };
+  const res = await axiosInstance.get('/artisans', { params });
+  set({ mapArtisans: res.data.artisans });
+},
 
   // Existing methods remain unchanged
   fetchArtisan: async (id) => {
@@ -80,26 +63,45 @@ export const useArtisanStore = create((set) => ({
       });    
     }
   },
+// useArtisanStore.js
+// store/useArtisanStore.js
+fetchNearby: async (lat, lng, radius = 5, extra = {}) => {
+  set({ loading: true, artisansError: null });
 
-  fetchNearby: async (lat, lng, radius = 10) => {
-    set({ loading: true, artisansError: null });
-    try {
-      const res = await axiosInstance.get('/artisans/nearby', { 
-        params: { lat, lng, radius } 
-      });
-      set({
-        artisans: res.data.artisans,
-        nearbyMode: true,
-        pagination: { page: 1, totalPages: 1 },
-        loading: false,
-      });
-    } catch (err) {
-      set({
-        artisansError: err.response?.data?.message || 'Failed to fetch nearby artisans',
-        loading: false,
-      });
-    }
-  },
+  const params = new URLSearchParams({
+    lat,
+    lng,
+    radius,
+    page: extra.page || 1,
+    limit: extra.limit || 10,
+    ...(extra.skill && { skill: extra.skill }),
+    ...(extra.availableOnly !== undefined && { available: extra.availableOnly }),
+    ...(extra.onlyApproved !== undefined && { onlyApproved: extra.onlyApproved }),
+  });
+
+  try {
+    const res = await axiosInstance.get(`/artisans/nearby?${params}`);
+    console.log(res.data.artisans)
+    set({
+      lat,
+      lng,
+      radius,
+      nearby: res.data.artisans,
+      artisans: res.data.artisans,
+      pagination: {
+        page: extra.page || 1,
+        total: res.data.total,
+        totalPages: res.data.totalPages,
+      },
+      nearbyMode: true,
+      loading: false,
+    });
+  } catch (err) {
+    set({ nearby: [], artisans: [], loading: false });
+  }
+},
+
+
 
   clearArtisans: () => set({
     artisans: [],
@@ -108,5 +110,7 @@ export const useArtisanStore = create((set) => ({
     lastFilters: null,
     nearbyMode: false,
     pagination: { page: 1, totalPages: 1 },
+     mapArtisans: [], // ✅ clear map
+    
   }),
 }));

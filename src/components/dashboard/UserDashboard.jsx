@@ -4,6 +4,7 @@ import MyBookings from '../MyBookings';
 import MyReviews from "../MyReviews";
 import UpdateProfileForm from '../updateProfileForm';
 import ChangePasswordForm from '../ChangePasswordForm';
+import ReferralCard from '../ReferralCard';
 
 
 
@@ -30,8 +31,15 @@ export default function UserDashboard() {
       {/* Jobs Section */}
      <MyBookings />
 
+    
+      
       {/* Reviews Section */}
       <MyReviews />
+
+   {/* Referral Section */}
+      <ReferralCard />
+
+      
 
       {/* Update Profile Section */}
       <section className="bg-white p-6 rounded-md shadow">

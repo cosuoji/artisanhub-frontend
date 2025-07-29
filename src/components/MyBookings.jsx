@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState} from 'react';
 import { useJobStore } from '../store/useJobStore';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
@@ -7,6 +7,7 @@ import { usePagination } from '../hooks/usePagination';
 
 function MyBookings() {
   const { jobs, fetchUserJobs, cancelJob, loading, totalJobs, currentPage } = useJobStore();
+
 
   useEffect(() => {
     fetchUserJobs(1);
@@ -80,6 +81,7 @@ function MyBookings() {
                   </p>
                 )}
 
+
                 {/* Cancel Button */}
                 <button
                   onClick={() => cancelJob(job._id)}
@@ -87,7 +89,7 @@ function MyBookings() {
                 >
                   Cancel
                 </button>
-              </div>
+    </div>
             ))}
           </div>
 

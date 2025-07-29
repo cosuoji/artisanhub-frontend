@@ -1,57 +1,107 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState} from 'react';
 import { useArtisanStore } from '../store/useArtisanStore';
 import DirectoryFilters from '../components/DirectoryFilters';
 import ArtisanMap from '../components/ArtisanMap';
 import ArtisanMapList from '../components/ArtisanMapList';
 import { useDebounce } from '../hooks/useDebounce';
 import axiosInstance from '../api/axios';
+import { usePagination } from '../hooks/usePagination';
 
 export default function DirectoryPage() {
   const {
-    artisans, 
-    loading, 
-    pagination, 
+    artisans,
+    loading,
+    pagination,
     nearbyMode,
+    fetchArtisans,
+    fetchNearby,
+    clearArtisans,
+    fetchMapArtisans,
     mapArtisans,
-    fetchArtisans, 
-    fetchNearby, 
-    fetchMapArtisans,  
-    clearArtisans
+    nearby
   } = useArtisanStore();
 
   const [locations, setLocations] = useState([]);
   const [locationError, setLocationError] = useState(null);
   const [mapCenter, setMapCenter] = useState([6.5244, 3.3792]);
   const listRef = useRef();
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const [filters, setFilters] = useState({
-    skill: '',
-    location: '',
-    minYears: '',
-    onlyApproved: false,
-    availableOnly: false,
-  });
 
-  const debouncedFilters = useDebounce(filters, 500);
+  
+const handlePageChange = (page) => {
+  setCurrentPage(page);
 
-  useEffect(() => {
-    // Fetch filtered list with all filters
-    fetchArtisans(debouncedFilters, 1);
-    
-    // Fetch map data with ONLY location filter
-    fetchMapArtisans({ 
-      location: debouncedFilters.location 
+  if (nearbyMode) {
+    const { lat, lng, radius } = useArtisanStore.getState();
+
+    fetchNearby(lat, lng, radius, {
+      ...debouncedFilters,
+      page,
     });
-  }, [debouncedFilters]);
+  } else {
+    fetchArtisans(debouncedFilters, page);
+  }
 
-  const applyFilters = (customFilters = filters) => {
-    const sanitized = {
-      ...customFilters,
-      skill: customFilters.skill?.toLowerCase() || '',
-      minYears: customFilters.minYears || '',
+  setTimeout(() => {
+    listRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, 100);
+};
+
+
+
+  
+const { total = 0, totalPages = 1 } = pagination || {};
+const { PageButtons } = usePagination({
+  totalItems: total,
+  perPage: 10,
+  currentPage,
+  onPageChange: handlePageChange,
+});
+
+  
+ const [filters, setFilters] = useState({
+  skill: '',
+  location: '',
+  minYears: '',
+  onlyApproved: undefined,   // “don’t filter”
+  availableOnly: undefined,
+});
+
+const debouncedFilters = useDebounce(filters, 500);
+
+
+useEffect(() => {
+  setCurrentPage(1); // reset to page 1 on filter change
+
+  if (nearbyMode && mapCenter) {
+    fetchMapArtisans({
+      lat: mapCenter[0],
+      lng: mapCenter[1],
+      radius: 10,
+      skill: debouncedFilters.skill,
+      available: debouncedFilters.availableOnly,
+    });
+
+    fetchArtisans(
+      { lat: mapCenter[0], lng: mapCenter[1], radius: 10, skill: debouncedFilters.skill, available: debouncedFilters.availableOnly },
+      1
+    );
+  } else {
+    fetchMapArtisans(debouncedFilters);
+    fetchArtisans(debouncedFilters, 1);
+  }
+}, [debouncedFilters, nearbyMode, mapCenter]);
+
+
+    const applyFilters = (customFilters = filters) => {
+      const sanitized = {
+        ...customFilters,
+        skill: customFilters.skill ? customFilters.skill.toLowerCase() : '',
+        minYears: customFilters.minYears || '',
+      };
+      setFilters(sanitized);
     };
-    setFilters(sanitized);
-  };
 
   const resetFilters = () => {
     clearArtisans();
@@ -59,24 +109,30 @@ export default function DirectoryPage() {
       skill: '',
       location: '',
       minYears: '',
-      onlyApproved: false,
-      availableOnly: false,
+      onlyApproved: undefined,
+      availableOnly: undefined,
     });
-    setMapCenter([6.5244, 3.3792]); // Reset to default center
+    setMapCenter([6.5244, 3.3792]);
   };
+ 
 
-  const handlePageChange = (newPage) => fetchArtisans(filters, newPage);
+const locateMe = () => {
+    if (!navigator.geolocation) {
+      return alert('Geolocation not supported');
+    }
 
-  const locateMe = () => {
-    if (!navigator.geolocation) return alert('Geolocation not supported');
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude, longitude } = pos.coords;
-        fetchNearby(latitude, longitude, 5);
+
+        // pass *all* current filters into fetchNearby as `extra`
+       fetchNearby(latitude, longitude, 5, debouncedFilters); // <- send all filters
+
         setMapCenter([latitude, longitude]);
-        setTimeout(() => {
-          listRef.current?.scrollIntoView({ behavior: 'smooth' });
-        }, 500);
+        setTimeout(
+          () => listRef.current?.scrollIntoView({ behavior: 'smooth' }),
+          500
+        );
       },
       () => alert('Failed to get location'),
       { enableHighAccuracy: true }
@@ -85,10 +141,12 @@ export default function DirectoryPage() {
 
   useEffect(() => {
     axiosInstance.get('/locations')
-      .then((res) => setLocations(res.data.filter(loc => loc.isActive)))
+      .then(res => setLocations(res.data.filter(loc => loc.isActive)))
       .catch(() => {});
   }, []);
 
+  console.log(total)
+ 
   return (
     <div>
       <div className="flex flex-col md:flex-row gap-6">
@@ -100,13 +158,10 @@ export default function DirectoryPage() {
           onReset={resetFilters}
           onLocateMe={locateMe}
         />
-        <ArtisanMap
-         artisans={mapArtisans}  
-         mapCenter={mapCenter} // ⬅️ new
-         loading={loading} 
-          filters={debouncedFilters}
-         nearbyMode={nearbyMode} />
-        
+      
+       {nearbyMode ?  <ArtisanMap artisans={nearby} loading={loading} mapCenter={mapCenter}/> :  <ArtisanMap artisans={mapArtisans} loading={loading} mapCenter={mapCenter}/>}
+    
+      
       </div>
 
       {locationError && (
@@ -124,14 +179,13 @@ export default function DirectoryPage() {
           </button>
         </div>
       )}
-    <div ref={listRef}>
-      <ArtisanMapList
-        artisans={artisans}
-        loading={loading}
-        pagination={pagination}
-        onPageChange={handlePageChange}
-      />
-      </div>
+
+      <div ref={listRef}> 
+       {nearbyMode ?  <ArtisanMapList artisans={nearby} loading={loading} /> :  <ArtisanMapList artisans={artisans} loading={loading} />}
+        </div>
+      {/* Pagination Controls */}
+      <PageButtons />
+     
     </div>
   );
 }

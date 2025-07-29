@@ -3,6 +3,7 @@ import { useReviewStore } from '../store/reviewStore';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { usePagination } from '../hooks/usePagination';
+import ReviewCard from './ReviewCard';
 
 export default function MyReviews() {
   const {
@@ -61,6 +62,8 @@ export default function MyReviews() {
                     </Link>
                   </p>
                 )}
+
+                <ReviewCard review={review} />
 
                 <button
                   onClick={() => deleteMyReview(review._id)}

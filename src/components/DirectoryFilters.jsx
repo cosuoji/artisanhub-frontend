@@ -8,6 +8,7 @@ export default function DirectoryFilters({
   locations,
   onApply,
   onLocateMe,
+  onReset
 }) {
   /* 1. Local state for instant UI feedback */
   const [local, setLocal] = useState(parentFilters);

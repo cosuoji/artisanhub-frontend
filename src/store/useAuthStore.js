@@ -57,28 +57,22 @@ export const useAuthStore = create((set, get) => ({
   },
   
 
-  signup: async (formData) => {
-    set({ loading: true });
-    try {
-      const res = await axiosInstance.post('/auth/signup', formData, { withCredentials: true });
-    
-      try {
-        await new Promise(res => setTimeout(res, 1000))
-        await get().fetchUserData(); // try to fetch profile
-        await axios.get('/test-cookies', { withCredentials: true });
-      } catch (err) {
-        console.warn("⚠️ Failed to fetch user after signup");
-        //toast.error("You are signed up, but authentication failed. Please log in.");
-        return false;
-      }
-        set({ loading: false });
-      return true;
-    } catch (err) {
-      //toast.error(err.response?.data?.message || 'Signup failed');
-      set({ loading: false });
-      return false;
-    }
-  },
+signup: async (formData) => {
+  set({ loading: true });
+  try {
+    await axiosInstance.post('/auth/signup', formData, { withCredentials: true });
+    // wait a tick for the browser to persist cookies
+    await new Promise(r => setTimeout(r, 500));
+    // now load the user once cookies exist
+    await get().fetchUserData();
+    set({ loading: false });
+    return true;
+  } catch (err) {
+    toast.error(err.response?.data?.message || 'Signup failed');
+    set({ loading: false });
+    return false;
+  }
+},
   
   logout: async () => {
     try {

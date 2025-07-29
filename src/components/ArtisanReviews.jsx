@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { useReviewStore } from '../store/reviewStore';
 import { useAuthStore } from '../store/useAuthStore';
+import ReviewCard from './ReviewCard';
 
 function Reviews({ artisanId }) {
   const {
@@ -45,6 +46,7 @@ function Reviews({ artisanId }) {
             </p>
           </div>
           <p className="text-sm text-gray-700 mt-1">{review.comment}</p>
+          <ReviewCard review={review} />
 
           {user?._id === review.user?._id && (
             <button

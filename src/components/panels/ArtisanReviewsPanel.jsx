@@ -4,6 +4,7 @@ import { useReviewStore } from '../../store/reviewStore';
 import { format } from 'date-fns';
 import { useAuthStore } from '../../store/useAuthStore';
 import { usePagination } from '../../hooks/usePagination';
+import ReviewCard from '../ReviewCard';
 
 
 export default function ArtisanReviewPanel() {
@@ -46,6 +47,7 @@ export default function ArtisanReviewPanel() {
                   <span className="text-yellow-500 font-bold">{'★'.repeat(review.rating)}</span>
                 </div>
                 <p className="mt-2">{review.comment}</p>
+                <ReviewCard review={review} />
               </div>
             ))}
           </div>

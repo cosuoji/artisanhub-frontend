@@ -11,6 +11,8 @@ export default function ReviewForm({ artisanId }) {
   const [canReview, setCanReview] = useState(false);
   const { user } = useAuthStore();
   const { postReview } = useReviewStore();
+  const [files, setFiles] = useState([]);
+  
 
   // ⭐ Show label for current selected stars
   const ratingLabels = ['Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
@@ -40,13 +42,22 @@ export default function ReviewForm({ artisanId }) {
     }
   
     setSubmitting(true); // Only set submitting AFTER validation passes
+    const formData = new FormData();
+    formData.append('artisanId', artisanId);
+    formData.append('rating', rating);
+    formData.append('comment', comment);
+    files.forEach(file => formData.append('images', file));
   
     try {
-      const res = await postReview(artisanId, rating, comment);
+      const res =  await axiosInstance.post('/reviews', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
       if (res.success) {
         toast.success('Review submitted');
         setComment('');
         setRating(0);
+        setFiles([]);
       } else {
         if (res.message.includes('already reviewed')) {
           toast.error('You already left a review for this artisan.');
@@ -94,6 +105,17 @@ export default function ReviewForm({ artisanId }) {
           placeholder="Write your thoughts..."
         />
       </div>
+
+      
+        {/* Photo upload */}
+        <label className="block text-sm font-medium">Add photos (max 3)</label>
+        <input
+          type="file"
+          multiple
+          accept="image/*"
+          onChange={(e) => setFiles(Array.from(e.target.files).slice(0, 3))}
+          className="w-full text-sm"
+        />
 
       <button
         type="submit"

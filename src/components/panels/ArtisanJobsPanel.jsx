@@ -4,9 +4,11 @@ import { useJobStore } from '../../store/useJobStore';
 import JobDetailModal from './JobDetailsModal';
 import { format } from 'date-fns';
 
+
 export default function ArtisanJobPanel() {
   const { artisanJobs, fetchArtisanJobs, markJobCompleted, jobLoading } = useJobStore();
   const [selectedJob, setSelectedJob] = useState(null);
+
 
   useEffect(() => {
     fetchArtisanJobs(); // for artisan this returns jobs assigned to them
@@ -56,6 +58,7 @@ export default function ArtisanJobPanel() {
                 >
                   View Details
                 </button>
+
                 {job.status !== 'completed' && (
                   <button
                     onClick={() => markJobCompleted(job._id)}
@@ -73,6 +76,7 @@ export default function ArtisanJobPanel() {
       {selectedJob && (
         <JobDetailModal job={selectedJob} onClose={() => setSelectedJob(null)} />
       )}
+
     </div>
   );
 }

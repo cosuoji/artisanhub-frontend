@@ -10,6 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fullcalendar/daygrid": "^6.1.18",
+    "@fullcalendar/react": "^6.1.18",
+    "@fullcalendar/timegrid": "^6.1.18",
     "@headlessui/react": "^2.2.4",
     "@hookform/resolvers": "^5.1.1",
     "@react-aria/focus": "^3.20.5",
@@ -32,6 +35,8 @@
     "react-leaflet-cluster": "^2.1.0",
     "react-photo-view": "^1.2.7",
     "react-router-dom": "^7.6.3",
+    "recharts": "^3.1.0",
+    "socket.io-client": "^4.8.1",
     "zod": "^4.0.5",
     "zustand": "^5.0.6"
   },

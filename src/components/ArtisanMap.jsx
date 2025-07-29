@@ -12,23 +12,23 @@ L.Icon.Default.mergeOptions({
   shadowUrl: new URL('leaflet/dist/images/marker-shadow.png', import.meta.url).href,
 });
 
-export default function ArtisanMap({ artisans, mapCenter, nearbyMode }) {
+export default function ArtisanMap({ artisans, mapCenter, nearbyMode}) {
   return (
     <MapContainer
       center={mapCenter}
+       key={JSON.stringify(artisans)} // Re-render when artisans change
       zoom={nearbyMode ? 13 : 11}
-      key={JSON.stringify(artisans)} // Re-render when artisans change
       className="h-[600px] w-full rounded shadow"
     >
       <TileLayer
-        attribution='&copy; OpenStreetMap contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution="© OpenStreetMap contributors"
       />
       <MarkerClusterGroup>
         {artisans?.map((artisan) => {
           const coords = artisan.artisanProfile?.coordinates?.coordinates;
-          if (!coords?.length === 2) return null;
-          
+          if (!coords || coords.length !== 2) return null;
+
           const [lng, lat] = coords;
           return (
             <Marker key={artisan._id} position={[lat, lng]}>
@@ -48,6 +48,7 @@ export default function ArtisanMap({ artisans, mapCenter, nearbyMode }) {
             </Marker>
           );
         })}
+
       </MarkerClusterGroup>
     </MapContainer>
   );

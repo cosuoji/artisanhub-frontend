@@ -9,6 +9,8 @@ import ReviewForm from '../components/ReviewForm';
 import ContactModal from '../components/ContactModal';
 import BookingModal from '../components/BookingModal';
 import { useReviewStore } from '../store/reviewStore';
+import FavouriteButton from '../components/FavoriteButton';
+import ShareButton from '../components/ShareButton';
 
 
 export default function ArtisanProfilePage() {
@@ -88,7 +90,14 @@ export default function ArtisanProfilePage() {
         >
           Book Now
         </button>
+        <div className='flex gap-4'>
+          <ShareButton artisanId={id}/>
+        </div>
+        <div className='flex gap-4'>
+          <FavouriteButton artisanId={artisan._id} />
+        </div>
       </div>
+
       </div>
 
       {/* Ratings */}
