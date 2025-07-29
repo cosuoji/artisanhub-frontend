@@ -25,7 +25,6 @@ fetchArtisans: async (filters = {}, page = 1) => {
     const res = await axiosInstance.get('/artisans', {
       params: { page, limit: 10, ...filters, skill: filters.skill || undefined },
     });
-    console.log('Fetched artisans:', res.data.artisans.length);
 
     set({
       artisans: res.data.artisans,
@@ -81,7 +80,6 @@ fetchNearby: async (lat, lng, radius = 5, extra = {}) => {
 
   try {
     const res = await axiosInstance.get(`/artisans/nearby?${params}`);
-    console.log(res.data.artisans)
     set({
       lat,
       lng,

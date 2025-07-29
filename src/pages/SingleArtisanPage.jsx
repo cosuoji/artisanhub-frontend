@@ -11,6 +11,7 @@ import BookingModal from '../components/BookingModal';
 import { useReviewStore } from '../store/reviewStore';
 import FavouriteButton from '../components/FavoriteButton';
 import ShareButton from '../components/ShareButton';
+import FloatingChat from '../components/FloatingChat';
 
 
 export default function ArtisanProfilePage() {
@@ -165,6 +166,7 @@ export default function ArtisanProfilePage() {
 
         </div> 
 
+     <FloatingChat artisanId={id} />
 
     </div>
   );

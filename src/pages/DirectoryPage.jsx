@@ -145,7 +145,6 @@ const locateMe = () => {
       .catch(() => {});
   }, []);
 
-  console.log(total)
  
   return (
     <div>

@@ -8,9 +8,7 @@ export default function FavouriteButton({ artisanId }) {
   const [isFav, setFav] = useState(checkProfile || false);
 
   const toggle = async () => {
-    console.log(artisanId)
     const { data } = await axiosInstance.patch(`/users/favourites/${artisanId}`);
-    console.log(data)
     setFav(!isFav);
   };
 

@@ -24,11 +24,9 @@ export default function AnalyticsPanel() {
     fetchAnalytics();
   }, []);
 
-  console.log(analytics)
 
   if (!analytics) return <p className="text-gray-600">Loading analytics...</p>;
 
-  console.log(analytics)
 
 const barData = [
   { name: 'Users', value: analytics.totalUsers },
