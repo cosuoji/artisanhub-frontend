@@ -18,13 +18,11 @@ import CookieConsentBanner from './components/CookieConsentBanner.jsx';
 import Terms from './pages/Terms.jsx';
 import Privacy from './pages/Privacy.jsx';
 import Favourites from './pages/Favourites.jsx';
-import { useThemeStore } from './store/useThemeStore.js';
 
 
 export default function App() {
   const init = useAuthStore((state) => state.init);
   const { user } = useAuthStore();
-  const { dark } = useThemeStore();
 
 
   useEffect(() => {
