@@ -1,6 +1,11 @@
+// src/store/useAuthStore.js
 import { create } from 'zustand';
 import axiosInstance, { setupAxiosInterceptor } from '../api/axios';
 import { toast } from 'react-hot-toast';
+
+const publicRoutes = ['/', '/login', '/signup', '/directory'];
+
+let isRefreshing = false;
 
 export const useAuthStore = create((set, get) => ({
   user: null,
@@ -8,7 +13,6 @@ export const useAuthStore = create((set, get) => ({
   checkingAuth: true,
   _initialized: false,
 
-  // Initialize auth system
   init: async () => {
     const store = get();
     if (store._initialized) return;
@@ -22,146 +26,68 @@ export const useAuthStore = create((set, get) => ({
     set({ _initialized: true });
   },
 
-  // Check authentication state
   checkAuth: async () => {
     set({ checkingAuth: true });
     try {
       await get().fetchUserData();
     } catch {
-      // Mobile fallback check
-      if (this.isMobile() && localStorage.getItem('mobile_access')) {
-        try {
-          await get().refreshToken();
-          await get().fetchUserData();
-          return;
-        } catch {
-          // Fallback failed, proceed with logout
-        }
-      }
       set({ user: null });
     } finally {
       set({ checkingAuth: false });
     }
   },
 
-  // Mobile detection helper
-  isMobile: () => {
-    return /Mobile|Android|iPhone/i.test(navigator.userAgent);
-  },
-
-login: async (formData) => {
-    const { isMobile } = get(); // Get the function from store
+  login: async (formData) => {
     set({ loading: true });
-    
     try {
       const res = await axiosInstance.post('/auth/login', formData, {
         withCredentials: true,
         _shouldRetry: false,
       });
-
-      // Use the store's isMobile function
-      if (isMobile() && res.data?.tokens) {
-        localStorage.setItem('mobile_access', res.data.tokens.accessToken);
-        localStorage.setItem('mobile_refresh', res.data.tokens.refreshToken);
-      }
-
-        await get().fetchUserData();
-      return true;
-    } catch (err) {
-      console.log(err)
-      toast.error(err.response?.data || 'Login failed');
-      return false;
-    } finally {
+  
+      await get().fetchUserData();
       set({ loading: false });
-    }
-  },
-
-  // Token management
-  setTokens: (accessToken, refreshToken) => {
-    // Update axios headers
-    axiosInstance.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
-    
-    // Mobile fallback
-    if (this.isMobile()) {
-      localStorage.setItem('mobile_access', accessToken);
-      if (refreshToken) {
-        localStorage.setItem('mobile_refresh', refreshToken);
-      }
-    }
-  },
-
-  // Enhanced refresh token with mobile support
-  refreshToken: async () => {
-    if (get().isRefreshing) return;
-    get().isRefreshing = true;
-
-    try {
-      let res;
-      const isMobile = this.isMobile();
-      const mobileRefresh = localStorage.getItem('mobile_refresh');
-
-      // Mobile fallback flow
-      if (isMobile && mobileRefresh) {
-        res = await axiosInstance.post('/auth/refresh', {
-          refreshToken: mobileRefresh
-        }, {
-          _shouldRetry: false,
-          withCredentials: false
-        });
-      } else {
-        // Standard cookie flow
-        res = await axiosInstance.post('/auth/refresh', {}, {
-          withCredentials: true,
-          _shouldRetry: false
-        });
-      }
-
-      // Update tokens everywhere
-      get().setTokens(res.data.accessToken, res.data.refreshToken);
-      return res.data;
+      return true;
+  
     } catch (err) {
-      await get().logout();
-      throw err;
-    } finally {
-      get().isRefreshing = false;
+      set({ loading: false });
+      toast.error(err.response?.data?.message || 'Login failed');
+      return false;
     }
   },
+  
 
-  // Enhanced logout with mobile cleanup
+signup: async (formData) => {
+  set({ loading: true });
+  try {
+    await axiosInstance.post('/auth/signup', formData, { withCredentials: true });
+    // wait a tick for the browser to persist cookies
+    await new Promise(r => setTimeout(r, 500));
+    // now load the user once cookies exist
+    await get().fetchUserData();
+    set({ loading: false });
+    return true;
+  } catch (err) {
+    toast.error(err.response?.data?.message || 'Signup failed');
+    set({ loading: false });
+    return false;
+  }
+},
+  
   logout: async () => {
     try {
-      await axiosInstance.post('/auth/logout', {}, {
-        withCredentials: true
-      });
+      await axiosInstance.post('/auth/logout');
     } catch (_) {}
 
-    // Mobile cleanup
-    if (this.isMobile()) {
-      localStorage.removeItem('mobile_access');
-      localStorage.removeItem('mobile_refresh');
-    }
-
-    // Clear everything
-    delete axiosInstance.defaults.headers.common.Authorization;
     set({ user: null });
   },
 
-  // Fetch user data with token fallback
   fetchUserData: async () => {
     try {
-      // Add mobile token to header if needed
-      if (this.isMobile() && !axiosInstance.defaults.headers.common.Authorization) {
-        const mobileToken = localStorage.getItem('mobile_access');
-        if (mobileToken) {
-          axiosInstance.defaults.headers.common.Authorization = `Bearer ${mobileToken}`;
-        }
-      }
-
-      const res = await axiosInstance.get('/auth/profile');
+      const res = await axiosInstance.get('/auth/profile', { withCredentials: true });
       set({ user: res.data });
-      return res.data;
     } catch (err) {
-      delete axiosInstance.defaults.headers.common.Authorization;
+      set({ user: null });
       throw err;
     }
   },

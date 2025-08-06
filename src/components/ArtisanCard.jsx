@@ -2,6 +2,8 @@ import { Link, useLocation, useNavigate} from 'react-router-dom';
 import FavouriteButton from './FavoriteButton';
 import ShareButton from './ShareButton';
 import { capitalizeWords } from '../utils/capitalize';
+import { useAuthStore } from '../store/useAuthStore';
+
 
 
 
@@ -9,6 +11,8 @@ export default function ArtisanCard({ artisan }) {
   const { _id, name, artisanProfile} = artisan;
   const skills = artisanProfile?.skills?.slice(0).join(', ') || '';
    const location = useLocation();
+      const {user} = useAuthStore()
+
 
     return (
     <div className="bg-white rounded shadow p-4 flex flex-col">
@@ -19,7 +23,7 @@ export default function ArtisanCard({ artisan }) {
           <p className="text-sm text-black-600">{capitalizeWords(skills)}</p>
         {location.pathname === "/directory" && <p className="text-xs text-black-500">{artisan?.artisanProfile?.location?.name}</p>}
         </div>
-        <FavouriteButton artisanId={_id} />
+        {user && <FavouriteButton artisanId={_id} /> }
       </div>
       
 

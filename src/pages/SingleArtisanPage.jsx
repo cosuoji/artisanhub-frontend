@@ -12,6 +12,8 @@ import { useReviewStore } from '../store/reviewStore';
 import FavouriteButton from '../components/FavoriteButton';
 import ShareButton from '../components/ShareButton';
 import FloatingChat from '../components/FloatingChat';
+import { useAuthStore } from '../store/useAuthStore';
+
 
 
 export default function ArtisanProfilePage() {
@@ -166,7 +168,7 @@ export default function ArtisanProfilePage() {
 
         </div> 
 
-     <FloatingChat artisanId={id} />
+     {user && <FloatingChat artisanId={id} />}
 
     </div>
   );
