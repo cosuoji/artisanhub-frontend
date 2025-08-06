@@ -12,12 +12,10 @@ import { useReviewStore } from '../store/reviewStore';
 import FavouriteButton from '../components/FavoriteButton';
 import ShareButton from '../components/ShareButton';
 import FloatingChat from '../components/FloatingChat';
-import { useAuthStore } from '../store/useAuthStore';
 
 
 export default function ArtisanProfilePage() {
   const { id } = useParams();
-  const {user} = useAuthStore()
 
   const {loading,fetchArtisan, artisan} = useArtisanStore();
   const [showContact, setShowContact] = useState(false);
@@ -168,7 +166,7 @@ export default function ArtisanProfilePage() {
 
         </div> 
 
-     {user && <FloatingChat artisanId={id} />}
+     <FloatingChat artisanId={id} />
 
     </div>
   );
