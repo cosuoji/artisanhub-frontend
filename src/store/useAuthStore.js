@@ -49,22 +49,23 @@ export const useAuthStore = create((set, get) => ({
     return /Mobile|Android|iPhone/i.test(navigator.userAgent);
   },
 
-  // Login with mobile fallback
-  login: async (formData) => {
+login: async (formData) => {
+    const { isMobile } = get(); // Get the function from store
     set({ loading: true });
+    
     try {
       const res = await axiosInstance.post('/auth/login', formData, {
         withCredentials: true,
         _shouldRetry: false,
       });
 
-      // Mobile fallback storage
-      if (this.isMobile() && res.data?.tokens) {
+      // Use the store's isMobile function
+      if (isMobile() && res.data?.tokens) {
         localStorage.setItem('mobile_access', res.data.tokens.accessToken);
         localStorage.setItem('mobile_refresh', res.data.tokens.refreshToken);
       }
 
-      await get().fetchUserData();
+        await get().fetchUserData();
       return true;
     } catch (err) {
       console.log(err)
