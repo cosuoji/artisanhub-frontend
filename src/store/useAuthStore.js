@@ -51,7 +51,7 @@ export const useAuthStore = create((set, get) => ({
   
     } catch (err) {
       set({ loading: false });
-      toast.error(err.response?.data?.message || 'Login failed');
+      toast.error(err.response?.data || 'Login failed');
       return false;
     }
   },
