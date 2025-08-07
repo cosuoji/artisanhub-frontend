@@ -44,6 +44,18 @@ export const useAuthStore = create((set, get) => ({
         withCredentials: true,
         _shouldRetry: false,
       });
+
+         // --- NEW TEST CODE ---
+    const isMobileSafari =
+      /iP(hone|od|ad)/.test(navigator.userAgent) &&
+      /Safari/.test(navigator.userAgent) &&
+      !/Chrome/.test(navigator.userAgent);
+
+    await new Promise(r => setTimeout(r, 300)); // small delay so browser can set cookie
+    const hasCookie = document.cookie.includes('refreshToken=');
+    if (isMobileSafari && !hasCookie && res.data.refreshToken) {
+      localStorage.setItem('refreshToken', res.data.refreshToken);
+    }
   
       await get().fetchUserData();
       set({ loading: false });
@@ -92,15 +104,32 @@ signup: async (formData) => {
     }
   },
 
-  refreshToken: async () => {
-    try {
-      const res = await axiosInstance.post('/auth/refresh-token', {}, { withCredentials: true });
-      return res.data;
-    } catch (err) {
-      await get().logout(); // Clear everything
-      throw err;
+refreshToken: async () => {
+  try {
+    // mobile Safari fallback
+    const fallbackToken = localStorage.getItem('refreshToken');
+    if (fallbackToken) {
+      await axiosInstance.post(
+        '/auth/refresh-token',
+        {},
+        {
+          withCredentials: true,
+          headers: { Authorization: `Bearer ${fallbackToken}` },
+        }
+      );
+    } else {
+      await axiosInstance.post(
+        '/auth/refresh-token',
+        {},
+        { withCredentials: true }
+      );
     }
-  },
+  } catch (err) {
+    localStorage.removeItem('refreshToken');
+    await get().logout();
+    throw err;
+  }
+},
   
 
   resendVerification: async (email) => {
