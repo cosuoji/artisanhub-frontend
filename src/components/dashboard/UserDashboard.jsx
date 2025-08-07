@@ -4,7 +4,6 @@ import MyBookings from '../MyBookings';
 import MyReviews from "../MyReviews";
 import UpdateProfileForm from '../updateProfileForm';
 import ChangePasswordForm from '../ChangePasswordForm';
-import ReferralCard from '../ReferralCard';
 
 
 
@@ -37,7 +36,7 @@ export default function UserDashboard() {
       <MyReviews />
 
    {/* Referral Section */}
-      <ReferralCard />
+      {/* <ReferralCard /> */}
 
       
 

@@ -31,19 +31,27 @@ const isPublicRoute = (url) => {
 
 
 export const setupAxiosInterceptor = () => {
+  // 1) REQUEST interceptor (new)
+  axiosInstance.interceptors.request.use((cfg) => {
+    const hasCookie = document.cookie.includes('accessToken=');
+    if (!hasCookie) {
+      const fb = localStorage.getItem('refreshToken');
+      if (fb) cfg.headers['Authorization'] = `Bearer ${fb}`;
+    }
+    return cfg;
+  });
+
+  // 2) RESPONSE interceptor (your existing one)
   axiosInstance.interceptors.response.use(
-    res => res,
+    (res) => res,
     async (error) => {
       const originalRequest = error.config;
-  
       const url = new URL(originalRequest.url, window.location.origin).pathname;
-  
-      // ✅ Prevent retry logic for login, signup, reset password, etc.
+
       if (originalRequest._shouldRetry === false) {
         return Promise.reject(error);
       }
-  
-      // Only retry for private routes
+
       if (
         error.response?.status === 401 &&
         !originalRequest._retry &&
@@ -58,12 +66,10 @@ export const setupAxiosInterceptor = () => {
           return Promise.reject(refreshError);
         }
       }
-  
       return Promise.reject(error);
     }
   );
 };
-
 if (!axiosInstance.interceptors.response.handlers.length)
 setupAxiosInterceptor();
 
