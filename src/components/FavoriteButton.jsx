@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import axiosInstance from '../api/axios';
 import { useAuthStore } from '../store/useAuthStore';
+import { Heart, HeartOff} from 'lucide-react';
+
+
 
 export default function FavouriteButton({ artisanId }) {
   const { user } = useAuthStore();
@@ -17,7 +20,7 @@ export default function FavouriteButton({ artisanId }) {
       onClick={toggle}
       className={`text-2xl ${isFav ? 'text-red-500' : 'text-gray-400'}`}
     >
-      ❤
+      {isFav ? <Heart /> : <HeartOff /> }
     </button>
   );
 }

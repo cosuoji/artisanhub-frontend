@@ -63,6 +63,21 @@ export default function ArtisanProfilePage() {
           <p className="text-sm text-gray-600 capitalize">{skills?.[0]}</p>
           <p className="text-sm">{yearsOfExperience} yrs experience</p>
         </div>
+
+      </div>
+
+      {/* Ratings */}
+      <div className="text-sm flex gap-2 items-center">
+      {reviews.length > 0 && (
+  <span className="text-sm text-yellow-600 font-medium">
+    ⭐ Average Rating:{" "}
+    {(reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)} / 5
+  </span>
+)}
+        <span>({reviews?.length || 0} reviews)</span>
+      </div>
+
+        <div>
               {/* CTA Buttons */}
 
         <ContactModal
@@ -103,18 +118,6 @@ export default function ArtisanProfilePage() {
       </div>
 
       </div>
-
-      {/* Ratings */}
-      <div className="text-sm flex gap-2 items-center">
-      {reviews.length > 0 && (
-  <span className="text-sm text-yellow-600 font-medium">
-    ⭐ Average Rating:{" "}
-    {(reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)} / 5
-  </span>
-)}
-        <span>({reviews?.length || 0} reviews)</span>
-      </div>
-
       {/* Bio & Skills */}
       <div>
         <h2 className="font-semibold">About</h2>
