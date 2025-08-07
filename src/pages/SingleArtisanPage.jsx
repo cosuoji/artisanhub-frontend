@@ -18,6 +18,7 @@ import { useAuthStore } from '../store/useAuthStore';
 
 export default function ArtisanProfilePage() {
   const { id } = useParams();
+  const { user } = useAuthStore()
 
   const {loading,fetchArtisan, artisan} = useArtisanStore();
   const [showContact, setShowContact] = useState(false);
