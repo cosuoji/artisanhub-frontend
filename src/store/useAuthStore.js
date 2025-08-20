@@ -74,16 +74,7 @@ signup: async (formData) => {
   try {
     await axiosInstance.post('/auth/signup', formData, { withCredentials: true });
     // wait a tick for the browser to persist cookies
-    const isMobileSafari =
-      /iP(hone|od|ad)/.test(navigator.userAgent) &&
-      /Safari/.test(navigator.userAgent) &&
-      !/Chrome/.test(navigator.userAgent);
-
-    await new Promise(r => setTimeout(r, 300)); // small delay so browser can set cookie
-    const hasCookie = document.cookie.includes('refreshToken=');
-    if (isMobileSafari && !hasCookie && res.data.refreshToken) {
-      localStorage.setItem('refreshToken', res.data.refreshToken);
-    }
+    await new Promise(r => setTimeout(r, 500));
     // now load the user once cookies exist
     await get().fetchUserData();
     set({ loading: false });
