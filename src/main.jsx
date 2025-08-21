@@ -4,6 +4,8 @@ import App from './App.jsx';
 import './App.css';
 import { Toaster } from 'react-hot-toast';
 import 'leaflet/dist/leaflet.css';
+import { HelmetProvider } from "react-helmet-async";
+
 
 // 👇 PWA Service Worker registration
 import { registerSW } from 'virtual:pwa-register';
@@ -11,7 +13,9 @@ registerSW({ immediate: true });
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
+    <HelmetProvider>
     <App />
+    </HelmetProvider>
     <Toaster
       toastOptions={{
         style: {

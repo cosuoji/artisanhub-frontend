@@ -18,6 +18,7 @@ import CookieConsentBanner from './components/CookieConsentBanner.jsx';
 import Terms from './pages/Terms.jsx';
 import Privacy from './pages/Privacy.jsx';
 import Favourites from './pages/Favourites.jsx';
+import SEO from './components/SEO.jsx';
 
 
 export default function App() {
@@ -32,6 +33,7 @@ export default function App() {
   return (
     <Router>
       <CookieConsentBanner />
+       <SEO />
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
