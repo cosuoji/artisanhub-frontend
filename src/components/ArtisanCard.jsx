@@ -6,7 +6,6 @@ import { useAuthStore } from '../store/useAuthStore';
 
 
 
-
 export default function ArtisanCard({ artisan }) {
   const { _id, name, artisanProfile} = artisan;
   const skills = artisanProfile?.skills?.slice(0).join(', ') || '';

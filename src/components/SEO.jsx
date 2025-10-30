@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet-async"
 
 const SEO = ({
   title = "Artisan Hub",
-  description = "",
+  description = "Find Artisans in Lagos near you",
   url = "https://yourdomain.com",
   image = "https://yourdomain.com/images/og-default.jpg",
 }) => {

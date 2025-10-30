@@ -17,7 +17,7 @@ export const signupSchema = z.object({
     .regex(/[A-Z]/, 'Need 1 uppercase')
     .regex(/[^a-zA-Z0-9]/, 'Need 1 symbol'),
   confirmPassword: z.string(),
-  role: z.enum(['user', 'artisan']),
+  role: z.enum(['user', 'artisan']).optional(),
 }).refine(d => d.password === d.confirmPassword, {
   message: "Passwords don't match",
   path: ['confirmPassword'],

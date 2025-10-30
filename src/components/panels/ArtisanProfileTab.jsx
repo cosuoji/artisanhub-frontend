@@ -120,9 +120,7 @@ export default function ProfileTab({ user, fetchUserData }) {
             <p className={`text-sm font-medium ${user.isEmailVerified ? 'text-green-600' : 'text-red-600'}`}>
             {user.isEmailVerified ? 'Email Verified' : 'Email Not Verified'}
             </p>
-            <Link to="/resend-verification">
-            {!user.isEmailVerified && <span>Resend Verification </span> }
-            </Link>
+
           </div>
         </div>
       {profile &&   <div className="text-right">
@@ -149,14 +147,26 @@ export default function ProfileTab({ user, fetchUserData }) {
       {/* Edit Form */}
       <section className="bg-white p-6 rounded shadow">
         <div className="flex justify-between items-start">
-          <h3 className="text-lg font-semibold text-charcoal">Artisan Profile</h3>
-          <button
-            className="text-sm text-blue-600 hover:underline"
-            onClick={() => setEditMode(!editMode)}
-          >
-            {editMode ? "Cancel" : "Edit Profile"}
-          </button>
-        </div>
+  <h3 className="text-lg font-semibold text-charcoal">Artisan Profile</h3>
+
+  {!user.isEmailVerified ? (
+    <button
+      disabled
+      className="text-sm text-gray-400 cursor-not-allowed flex items-center gap-1"
+      title="Verify your email to edit your profile"
+    >
+      <span>🔒 Verify Email to Edit</span>
+    </button>
+  ) : (
+    <button
+      className="text-sm text-blue-600 hover:underline"
+      onClick={() => setEditMode(!editMode)}
+    >
+      {editMode ? "Cancel" : "Edit Profile"}
+    </button>
+  )}
+</div>
+
 
         {!editMode ? (
           <div className="mt-4 space-y-1">

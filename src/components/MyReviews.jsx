@@ -1,15 +1,14 @@
 import { useEffect } from 'react';
 import { useReviewStore } from '../store/reviewStore';
-import { Link } from 'react-router-dom';
-import { format } from 'date-fns';
 import { usePagination } from '../hooks/usePagination';
 import ReviewCard from './ReviewCard';
+import { useAuthStore } from '../store/useAuthStore';
+
 
 export default function MyReviews() {
   const {
     reviews,
     fetchMyReviews,
-    deleteMyReview,
     loading,
     currentPage,
     totalPages,
@@ -18,6 +17,8 @@ export default function MyReviews() {
   useEffect(() => {
     fetchMyReviews(1);
   }, []);
+
+  const userId = useAuthStore().user._id
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
@@ -44,34 +45,9 @@ export default function MyReviews() {
         <>
           <ul className="space-y-4">
             {reviews.map((review) => (
-              <li key={review._id} className="border p-4 rounded shadow-sm">
-                <p className="text-sm text-gray-600">
-                  Reviewed on {format(new Date(review.createdAt), 'dd MMM yyyy')}
-                </p>
-                <p className="mt-1">{review.comment}</p>
-                <p className="text-yellow-600 text-sm">Rating: {review.rating} ★</p>
-
-                {review.artisan && (
-                  <p className="mt-1 text-sm">
-                    For:{' '}
-                    <Link
-                      to={`/artisans/${review.artisan._id}`}
-                      className="text-blue-600 hover:underline"
-                    >
-                      {review.artisan.name}
-                    </Link>
-                  </p>
-                )}
-
-                <ReviewCard review={review} />
-
-                <button
-                  onClick={() => deleteMyReview(review._id)}
-                  className="text-red-600 hover:underline mt-2 text-sm"
-                >
-                  Delete Review
-                </button>
-              </li>
+              <div>
+                <ReviewCard review={review} userId={userId}/>
+           </div>
             ))}
           </ul>
 

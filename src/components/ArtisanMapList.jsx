@@ -13,7 +13,7 @@ const ArtisanMapList = ({artisans, total, nearbyMode}) => {
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {artisans?.map((artisan) => (
         <div key={artisan._id} className="p-4 shadow">
-          <ArtisanCard artisan={artisan} rating={artisan.artisanProfile.rating}/>
+          <ArtisanCard artisan={artisan} rating={artisan?.artisanProfile?.rating}/>
         </div>
       ))}
     </div>

@@ -195,4 +195,24 @@ refreshToken: async () => {
       };
     }
   },
+  completeArtisanSignup: async (data) => {
+  const ok = await get().signup({
+    name: data.name,
+    email: data.email,
+    password: data.password,
+    confirmPassword: data.confirmPassword,
+    role: 'artisan'
+  });
+  if (!ok) return false;
+  await axiosInstance.put('/artisans/me/profile', {
+    phone: data.phone,
+    bio: data.bio,
+    skills: data.skills.split(',').map(s => s.trim()),
+    yearsOfExperience: data.yearsOfExperience,
+    address: data.address,
+    location: data.location,
+  });
+  return true;
+}
+
 }));

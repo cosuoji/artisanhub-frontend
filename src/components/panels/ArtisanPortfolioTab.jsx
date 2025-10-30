@@ -36,7 +36,7 @@ export default function ArtisanPortfolioSection({ profile, refreshProfile }) {
   const handleFileChange = (e) => {
     const selected = Array.from(e.target.files);
 
-    const totalSelected = selected.length + (profile.portfolioImages?.length || 0) + files.length;
+    const totalSelected = selected.length + (profile?.portfolioImages?.length || 0) + files.length;
     if (totalSelected > 10) {
       toast.error('You can only upload up to 10 portfolio images in total');
       return;
@@ -98,14 +98,24 @@ export default function ArtisanPortfolioSection({ profile, refreshProfile }) {
       <h3 className="text-lg font-semibold text-charcoal">Portfolio Images</h3>
 
       {/* Upload Input */}
+    <div
+      onClick={() => fileInputRef.current?.click()}
+      className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:bg-gray-50 transition"
+    >
       <input
         type="file"
         ref={fileInputRef}
         multiple
         accept="image/*"
         onChange={handleFileChange}
-        className="block text-sm"
+        className="hidden"
       />
+      <p className="text-gray-600">
+        <span className="font-semibold text-blue-600">Click to upload</span> or drag and drop<br />
+        <span className="text-sm text-gray-500">PNG, JPG up to 5MB each</span>
+      </p>
+    </div>
+
 
       {/* Preview Selected Images with Remove Option */}
       {preview.length > 0 && (

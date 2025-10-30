@@ -1,11 +1,6 @@
 @import "tailwindcss";
 
 html {
-    font-family: 'Adobe Garamond Pro', sans-serif;
-}
-
-
-p {
-    font-family: "Inter", sans-serif; 
+font-family: "Inter", sans-serif;
 }
 

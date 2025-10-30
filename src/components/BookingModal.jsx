@@ -5,6 +5,7 @@ import Modal from "./Modal"
 
 export default function BookingModal({ artisanId, isOpen, onClose }) {
   const [description, setDescription] = useState('');
+   const [heading, setHeading] = useState('');
   const [date, setDate] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -17,6 +18,7 @@ export default function BookingModal({ artisanId, isOpen, onClose }) {
     try {
       await axiosInstance.post('/jobs', {
         artisanId,
+        heading,
         description,
         date: date || undefined,
       });
@@ -37,12 +39,20 @@ export default function BookingModal({ artisanId, isOpen, onClose }) {
         <h2 className="text-lg font-semibold text-charcoal mb-4">Book This Artisan</h2>
 
         <div className="space-y-4">
+           <input
+            value={heading}
+            type='text'
+            onChange={(e) => setHeading(e.target.value)}
+            className="w-full border p-2 rounded"
+            placeholder="What do you want done?"
+          />
+
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             className="w-full border p-2 rounded"
             rows={4}
-            placeholder="Describe the job you want done..."
+            placeholder="Describe the job you want done a bit ..."
           />
 
           <input

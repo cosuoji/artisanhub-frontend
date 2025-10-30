@@ -11,8 +11,9 @@ import BookingModal from '../components/BookingModal';
 import { useReviewStore } from '../store/reviewStore';
 import FavouriteButton from '../components/FavoriteButton';
 import ShareButton from '../components/ShareButton';
-import FloatingChat from '../components/FloatingChat';
+//import FloatingChat from '../components/FloatingChat';
 import { useAuthStore } from '../store/useAuthStore';
+import SEO from '../components/SEO';
 
 
 
@@ -51,11 +52,12 @@ export default function ArtisanProfilePage() {
   const { bio, skills,address, yearsOfExperience, totalJobsCompleted } = artisanProfile || {};
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded shadow space-y-6">
+      <SEO title={artisan?.name}/>
       {/* Profile Header */}
       <div className="flex items-center gap-4">
         <img
           src={avatar || '/default-avatar.png'}
-          alt={fullName}
+          alt={artisan?.name}
           className="w-20 h-20 rounded-full object-cover"
         />
         <div>
@@ -172,7 +174,7 @@ export default function ArtisanProfilePage() {
 
         </div> 
 
-     {user && <FloatingChat artisanId={id} />}
+     {/* {user && <FloatingChat artisanId={id} />} */}
 
     </div>
   );

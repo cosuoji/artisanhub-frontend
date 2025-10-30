@@ -22,9 +22,6 @@ export default function UserDashboard() {
         <p className={`text-sm font-medium ${user.isEmailVerified ? 'text-green-600' : 'text-red-600'}`}>
           {user.isEmailVerified ? 'Email Verified' : 'Email Not Verified'}
         </p>
-          <Link to="/resend-verification">
-          {!user.isEmailVerified && <span>Resend Verification </span> }
-          </Link>
       </section>
 
       {/* Jobs Section */}
@@ -33,7 +30,7 @@ export default function UserDashboard() {
     
       
       {/* Reviews Section */}
-      <MyReviews />
+      {/* <MyReviews /> */}
 
    {/* Referral Section */}
       {/* <ReferralCard /> */}

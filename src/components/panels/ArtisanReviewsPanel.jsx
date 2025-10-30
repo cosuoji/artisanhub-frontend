@@ -35,20 +35,8 @@ export default function ArtisanReviewPanel() {
       ) : (
         <>
           <div className="space-y-4">
-            {reviews?.map((review) => (
-              <div key={review._id} className="bg-white p-4 rounded shadow border">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="font-semibold">{review.user?.name || 'User'}</p>
-                    <p className="text-gray-500 text-sm">
-                      {format(new Date(review.createdAt), 'dd MMM yyyy')}
-                    </p>
-                  </div>
-                  <span className="text-yellow-500 font-bold">{'★'.repeat(review.rating)}</span>
-                </div>
-                <p className="mt-2">{review.comment}</p>
+            {reviews?.map((review) => (  
                 <ReviewCard review={review} />
-              </div>
             ))}
           </div>
 

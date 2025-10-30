@@ -36,26 +36,7 @@ function Reviews({ artisanId }) {
 
       {reviews.map((review) => (
         <div key={review._id} className="border-b pb-3">
-          <div className="flex items-center justify-between text-sm">
-            <p className="font-semibold">{review.user?.name || 'Anonymous'}</p>
-            <p className="text-yellow-500">
-              {'⭐'.repeat(review.rating)}{' '}
-              <span className="text-xs text-gray-500 ml-2">
-                ({formatDistanceToNow(new Date(review.createdAt))} ago)
-              </span>
-            </p>
-          </div>
-          <p className="text-sm text-gray-700 mt-1">{review.comment}</p>
-          <ReviewCard review={review} />
-
-          {user?._id === review.user?._id && (
-            <button
-              onClick={() => deleteMyReview(review._id)}
-              className="text-xs text-red-600 mt-2 hover:underline"
-            >
-              Delete Review
-            </button>
-          )}
+        <ReviewCard review={review} />
         </div>
       ))}
 

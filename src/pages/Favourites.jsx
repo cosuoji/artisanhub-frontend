@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import axiosInstance from '../api/axios';
 import ArtisanCard from '../components/ArtisanCard';
+import SEO from '../components/SEO';
+SEO
 
 export default function Favourites() {
   const [artisans, setArtisans] = useState([]);
@@ -10,6 +12,7 @@ export default function Favourites() {
 
   return (
     <div className="p-6">
+      <SEO title='Favourites' />
       <h2 className="text-xl font-bold mb-4">My Favourites</h2>
       {artisans.length === 0 ? (
         <p className="text-gray-500">You haven’t favourited anyone yet.</p>
