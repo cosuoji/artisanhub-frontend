@@ -11,7 +11,9 @@ export const useAdminStore = create((set, get) => ({
   page: 1,
   totalPages: 1,
   search: '',
+  featuredArtisans: [],
 
+  // 📊 Analytics
   fetchAnalytics: async () => {
     set({ loading: true });
     try {
@@ -23,6 +25,7 @@ export const useAdminStore = create((set, get) => ({
     }
   },
 
+  // 👥 Users
   fetchUsers: async (page = 1, search = '') => {
     set({ loading: true, page, search });
     try {
@@ -37,7 +40,6 @@ export const useAdminStore = create((set, get) => ({
       set({ loading: false });
     }
   },
-
 
   banUser: async (id) => {
     try {
@@ -68,14 +70,62 @@ export const useAdminStore = create((set, get) => ({
       toast.error('Failed to approve artisan');
     }
   },
-restoreUser: async (id) => {
+
+  restoreUser: async (id) => {
+    try {
+      await axiosInstance.patch(`/admin/users/${id}/restore`);
+      toast.success('User restored');
+      const updated = get().users.map((u) => u._id === id ? { ...u, isDeleted: false } : u);
+      set({ users: updated });
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to restore user');
+    }
+  },
+
+  // 🌟 FEATURED ARTISANS
+ fetchFeaturedArtisans: async (page = 1, search = '') => {
+  set({ loading: true, page });
   try {
-    await axiosInstance.patch(`/admin/users/${id}/restore`);
-    toast.success('User restored');
-    const updated = get().users.map((u) => u._id === id ? { ...u, isDeleted: false } : u);
-    set({ users: updated });
+    const res = await axiosInstance.get(`/admin/artisans/featured?page=${page}&search=${search}`);
+    set({
+      featuredArtisans: res.data.artisans || [],
+      totalPages: res.data.totalPages || 1,
+      loading: false,
+    });
   } catch (err) {
-    toast.error(err.response?.data?.message || 'Failed to restore user');
+    toast.error(err.response?.data?.message || 'Failed to load featured artisans');
+    set({ loading: false });
+  }
+},
+
+toggleFeatureArtisan: async (artisanId, durationDays = 0) => {
+  try {
+    const url =
+      durationDays > 0
+        ? `/admin/artisans/${artisanId}/feature?duration=${durationDays}d`
+        : `/admin/artisans/${artisanId}/toggle-feature`;
+
+    const res = await axiosInstance.patch(url);
+
+    toast.success(res.data.message);
+
+    // 🔄 Update artisan in local state immediately
+    const updated = get().featuredArtisans.map((a) =>
+      a._id === artisanId
+        ? {
+            ...a,
+            artisanProfile: {
+              ...a.artisanProfile,
+              featuredUntil: res.data.featuredUntil,
+              isCurrentlyFeatured: res.data.isCurrentlyFeatured,
+            },
+          }
+        : a
+    );
+
+    set({ featuredArtisans: updated });
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Failed to toggle feature");
   }
 },
 

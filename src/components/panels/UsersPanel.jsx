@@ -154,6 +154,29 @@ export default function UsersPanel() {
                     {user.role === 'artisan' && !user.artisanProfile?.isVerified && (
                       <button onClick={() => approveArtisan(user._id)} className="text-blue-600 hover:underline">Approve Artisan</button>
                     )}
+                    {user.role === 'artisan' && (
+                      <>
+                        {user.artisanProfile?.featuredUntil && new Date(user.artisanProfile.featuredUntil) > new Date() ? (
+                          <button
+                            onClick={() => useAdminStore.getState().toggleFeatureArtisan(user._id, 0)}
+                            className="text-purple-600 hover:underline"
+                          >
+                            Unfeature
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              const days = parseInt(prompt('Feature for how many days? (e.g., 7 or 30)'), 10);
+                              if (!isNaN(days)) useAdminStore.getState().toggleFeatureArtisan(user._id, days);
+                            }}
+                            className="text-purple-600 hover:underline"
+                          >
+                            Feature
+                          </button>
+                        )}
+                      </>
+                    )}
+
                   </td>
                 </tr>
               ))
@@ -204,6 +227,27 @@ export default function UsersPanel() {
                 {user.role === 'artisan' && !user.artisanProfile?.isVerified && (
                   <button onClick={() => approveArtisan(user._id)} className="text-blue-600 underline">Approve</button>
                 )}
+                {user.role === 'artisan' && (
+                  user.artisanProfile?.featuredUntil && new Date(user.artisanProfile.featuredUntil) > new Date() ? (
+                    <button
+                      onClick={() => useAdminStore.getState().toggleFeatureArtisan(user._id, 0)}
+                      className="text-purple-600 underline"
+                    >
+                      Unfeature
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        const days = parseInt(prompt('Feature for how many days? (e.g., 7 or 30)'), 10);
+                        if (!isNaN(days)) useAdminStore.getState().toggleFeatureArtisan(user._id, days);
+                      }}
+                      className="text-purple-600 underline"
+                    >
+                      Feature
+                    </button>
+                  )
+                )}
+
               </div>
             </div>
           ))
