@@ -26,7 +26,7 @@ export default function Home() {
 
       {/* Features Section */}
       <section className="py-16 px-6 max-w-6xl mx-auto">
-        <h2 className="text-2xl font-bold text-center text-charcoal mb-12">Why Use ArtisanHub?</h2>
+        <h2 className="text-2xl font-bold text-center text-charcoal mb-12">Why Use Abeg Fix?</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 text-center">
           {[
             {

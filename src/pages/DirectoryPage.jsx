@@ -33,6 +33,26 @@ export default function DirectoryPage() {
     availableOnly: undefined,
   });
 
+  useEffect(() => {
+  if (nearbyMode) {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude } = pos.coords;
+          fetchNearby(latitude, longitude, 5, debouncedFilters);
+        },
+        (err) => setLocationError("Failed to get location"),
+        { enableHighAccuracy: true }
+      );
+    } else {
+      setLocationError("Geolocation not supported");
+    }
+  } else {
+    fetchArtisans(debouncedFilters, 1);
+  }
+}, []);
+
+
   const debouncedFilters = useDebounce(filters, 500);
 
   const handlePageChange = (page) => {

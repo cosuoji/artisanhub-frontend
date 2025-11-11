@@ -15,10 +15,23 @@ import ForgotPassword from './pages/ForgotPassword.jsx';
 import ResetPassword from './pages/ResetPassword.jsx';
 import SingleArtisanPage from './pages/SingleArtisanPage.jsx';
 import CookieConsentBanner from './components/CookieConsentBanner.jsx';
-import Terms from './pages/Terms.jsx';
-import Privacy from './pages/Privacy.jsx';
 import Favourites from './pages/Favourites.jsx';
 import SEO from './components/SEO.jsx';
+import Guidelines from './components/innerpages/Guidelines.jsx';
+import Disclaimer from './components/innerpages/Disclaimer.jsx';
+import Cookies from './components/innerpages/Cookies.jsx';
+import RefundPolicy from './components/innerpages/RefundPolicy.jsx';
+import EarningsDisclaimer from './components/innerpages/EarningsDisclaimer.jsx';
+import DMCA from './components/innerpages/DMCA.jsx';
+import Safety from './components/innerpages/Safety.jsx';
+import DataPolicy from './components/innerpages/DataPolicy.jsx';
+import About from './components/innerpages/About.jsx';
+import HowItWorks from './components/innerpages/HowItWorks.jsx';
+import FAQs from './components/innerpages/FAQ.jsx';
+
+
+
+
 
 
 export default function App() {
@@ -41,8 +54,6 @@ export default function App() {
           <Route path="/artisans/:id" element={<SingleArtisanPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="/terms" element={<Terms />} />
           <Route path='favourites' element={<Favourites />} />
           <Route path="/theme-preview" element={<ThemePreview />} />
           <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
@@ -50,6 +61,17 @@ export default function App() {
           <Route path="/verify-email/:token" element={<VerifyEmail />} />
           <Route path="/forgot-password" element={!user ? <ForgotPassword /> : <Navigate to="/dashboard" />} />
           <Route path="/reset-password/:token" element={!user ? <ResetPassword /> : <Navigate to="/dashboard" />} />
+          <Route path="/guidelines" element={<Guidelines />} />
+          <Route path="/disclaimer" element={<Disclaimer />} />
+          <Route path="/cookies" element={<Cookies />} />
+          <Route path="/refund-policy" element={<RefundPolicy />} />
+          <Route path="/earnings-disclaimer" element={<EarningsDisclaimer />} />
+          <Route path="/dmca" element={<DMCA />} />
+          <Route path="/safety" element={<Safety />} />
+          <Route path="/data-policy" element={<DataPolicy />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/how-it-works" element={<HowItWorks />} />
+          <Route path="/faqs" element={<FAQs />} />
         </Route>
       </Routes>
     </Router>

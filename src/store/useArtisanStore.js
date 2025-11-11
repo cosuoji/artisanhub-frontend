@@ -6,7 +6,7 @@ export const useArtisanStore = create((set) => ({
   loading: false,
   artisansError: null,
   lastFilters: null,
-  nearbyMode: false,
+  nearbyMode: true,
   pagination: { page: 1, totalPages: 1 },
   artisan: null,
   locations: [],
@@ -14,7 +14,7 @@ export const useArtisanStore = create((set) => ({
   nearby: [],
   lat: null,
   lng: null,
-  radius: null,
+  radius: 5,
 
 
 // useArtisanStore.js

@@ -2,14 +2,14 @@
 import { Helmet } from "react-helmet-async"
 
 const SEO = ({
-  title = "Artisan Hub",
+  title = "Abeg Fix",
   description = "Find Artisans in Lagos near you",
-  url = "https://yourdomain.com",
-  image = "https://yourdomain.com/images/og-default.jpg",
+  url = "https://abegfix.com",
+  image = "https://abegfix.com/images/og-default.jpg",
 }) => {
   return (
     <Helmet>
-      <title>{title} | Artisan Hub</title>
+      <title>{title} | Abeg Fix</title>
       <meta name="description" content={description} />
       <meta name="robots" content="index, follow" />
 

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { HiMenu, HiX } from 'react-icons/hi';
 import { useAuthStore } from '../store/useAuthStore';
+import logo from "../assets/logo.png"
 
 
 export default function Header() {
@@ -22,7 +23,9 @@ export default function Header() {
   return (
     <header className="bg-white shadow-md sticky top-0 z-50">
       <div className="container mx-auto flex justify-between items-center py-4 px-6">
-        <Link to="/" className="font-bold text-xl text-[#1E3A8A]">ArtisanHub</Link>
+        <Link to="/" className="font-bold text-xl text-[#1E3A8A]">
+        <img src={logo} height={"160px"} width={"120px"} />
+        </Link>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex space-x-6 items-center">
