@@ -132,7 +132,7 @@ refreshToken: async () => {
 },
   
 
-  resendVerification: async (email) => {
+ resendVerification: async (email) => {
     set({ loading: true });
     try {
       const res = await axiosInstance.post('/auth/resend-verification', { email });
