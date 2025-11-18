@@ -79,47 +79,46 @@ export default function ArtisanProfilePage() {
         <span>({reviews?.length || 0} reviews)</span>
       </div>
 
-        <div>
-              {/* CTA Buttons */}
 
-        <ContactModal
-            isOpen={showContact}
-            onClose={() => setShowContact(false)}
-            phone={phone}
-            email={email}
-            address={address}
-            />        
+<div className="mt-4">
 
-      <div className="flex gap-4">
-        <button 
+  {/* If NOT logged in → show sign-in notice */}
+  {!user && (
+    <div className="bg-yellow-50 text-yellow-700 border border-yellow-300 p-3 rounded mb-3 text-sm">
+      Please <a href="/login" className="underline font-medium">sign in</a> or{" "}
+      <a href="/register" className="underline font-medium">create an account </a> 
+      to contact or book this artisan.
+    </div>
+  )}
+
+  {/* CTA Buttons (Visible only to logged in users) */}
+  {user && (
+    <div className="flex gap-4">
+
+      <button
         onClick={() => setShowContact(true)}
-        className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700">
-         Contact Me
-        </button>
+        className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700"
+      >
+        Contact Me
+      </button>
 
-        <BookingModal
-        aria-modal="true" role="dialog"
-            artisanId={artisan._id}
-            isOpen={showBooking}
-            onClose={() => setShowBooking(false)}
-            />
-
-
-        <button 
-         onClick={() => setShowBooking(true)}
+      <button
+        onClick={() => setShowBooking(true)}
         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Book Now
-        </button>
-        <div className='flex gap-4'>
-          <ShareButton artisanId={id}/>
-        </div>
-        <div className='flex gap-4'>
-          <FavouriteButton artisanId={artisan._id} />
-        </div>
-      </div>
+      >
+        Book Now
+      </button>
 
-      </div>
+      <ShareButton artisanId={id} />
+      <FavouriteButton artisanId={artisan._id} />
+
+    </div>
+  )}
+
+</div>
+
+
+
       {/* Bio & Skills */}
       <div>
         <h2 className="font-semibold">About</h2>
