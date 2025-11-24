@@ -8,6 +8,7 @@ const axiosInstance = axios.create({
 
 
 
+
 const publicRoutes = [
   '/',
   '/login',

@@ -1,58 +1,106 @@
-import { Link } from 'react-router-dom';
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 export default function Home() {
   return (
     <main className="bg-white">
-      {/* Hero Section */}
-      <section className="relative h-[80vh] flex items-center justify-center text-white text-center px-6">
-        {/* Background Image */}
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1521633246924-67d02995bb46?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')" }} // Replace with your actual image URL
-        >
-          <div className="absolute inset-0 bg-black opacity-60" />
-        </div>
+      {/* HERO */}
+      <section
+        className="relative flex flex-col justify-center items-center text-center px-6 h-[90vh] bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1521633246924-67d02995bb46'",
+        }}
+      >
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/50"></div>
 
-        {/* Hero Content */}
-        <div className="relative z-10 max-w-2xl">
-          <h1 className="text-4xl font-bold mb-4">Find Trusted Artisans Near You</h1>
-          <p className="text-lg mb-6">Connecting you with verified local handymen and professionals in your city.</p>
-          <Link to="/directory" className="bg-gold text-charcoal px-6 py-3 rounded font-semibold inline-block">
-            Explore Directory
-          </Link>
+        <motion.h1
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1 }}
+          className="text-4xl md:text-6xl font-bold text-white relative z-10"
+        >
+          ABEG FIX. Hire Better. Faster.
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.8 }}
+          className="max-w-xl mt-4 text-gray-200 relative z-10"
+        >
+          Browse skilled artisans, view verified profiles, and book the right
+          person instantly.
+        </motion.p>
+      </section>
+
+      {/* BENTO FEATURE MENU */}
+      <section className="py-20 px-6 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          {[
+            {
+              title: "Verified Artisans",
+              desc: "We verify identity (NIN/BVN), location & craftsmanship.",
+              span: "md:col-span-2",
+            },
+            {
+              title: "Local Experts",
+              desc: "Find artisans near your area instantly.",
+            },
+            {
+              title: "24/7 Support",
+              desc: "We’re here whenever you need help.",
+              span: "md:col-span-2",
+            },
+          ].map((box, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.15, duration: 0.7 }}
+              viewport={{ once: true }}
+              className={`bg-white p-8 rounded-2xl shadow-lg border ${box.span}`}
+            >
+              <h3 className="text-2xl font-bold mb-2">{box.title}</h3>
+              <p className="text-gray-700 text-sm">{box.desc}</p>
+            </motion.div>
+          ))}
         </div>
       </section>
 
+      {/* CALL TO ACTION */}
+      <section
+        className="text-center py-24 bg-cover bg-center bg-no-repeat relative"
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=1400&q=80')",
+        }}
+      >
+        <div className="absolute inset-0 bg-black/55"></div>
 
-      {/* Features Section */}
-      <section className="py-16 px-6 max-w-6xl mx-auto">
-        <h2 className="text-2xl font-bold text-center text-charcoal mb-12">Why Use Abeg Fix?</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 text-center">
-          {[
-            {
-              title: 'Approved Artisans',
-              desc: 'We ensure only vetted professionals are listed.',
-            },
-            {
-              title: 'Local Services',
-              desc: 'Find artisans who understand your local needs.',
-            },
-            {
-              title: 'Easy Booking',
-              desc: 'Hire and manage jobs all from one place.',
-            },
-            {
-              title: 'Proximity',
-              desc: 'Find help in close proximity.',
-            },
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+          className="text-3xl md:text-4xl font-bold mb-6 text-white relative z-10"
+        >
+          Ready to find a professional?
+        </motion.h2>
 
-          ].map((feature) => (
-            <div key={feature.title} className="bg-lightgray p-6 rounded shadow">
-              <h3 className="text-lg font-semibold text-primary mb-2">{feature.title}</h3>
-              <p className="text-charcoal text-sm">{feature.desc}</p>
-            </div>
-          ))}
-        </div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.7 }}
+          className="relative z-10"
+        >
+          <Link
+            to="/directory"
+            className="bg-gold text-charcoal px-10 py-4 rounded-xl font-semibold inline-block shadow-lg"
+          >
+            Get Started
+          </Link>
+        </motion.div>
       </section>
     </main>
   );
