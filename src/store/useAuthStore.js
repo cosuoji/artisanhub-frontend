@@ -71,16 +71,44 @@ export const useAuthStore = create((set, get) => ({
 
 signup: async (formData) => {
   set({ loading: true });
+
+  // Helper to wait for a cookie to exist
+  const waitForCookie = async (name, timeout = 5000) => {
+    const start = Date.now();
+    while (!document.cookie.includes(`${name}=`)) {
+      if (Date.now() - start > timeout) throw new Error('Cookie not set in time');
+      await new Promise(r => setTimeout(r, 100)); // poll every 100ms
+    }
+  };
+
   try {
-    await axiosInstance.post('/auth/signup', formData, { withCredentials: true });
-    // wait a tick for the browser to persist cookies
-    await new Promise(r => setTimeout(r, 500));
-    // now load the user once cookies exist
+    const res = await axiosInstance.post('/auth/signup', formData, { withCredentials: true });
+
+    // Detect Mobile Safari
+    const isMobileSafari =
+      /iP(hone|od|ad)/.test(navigator.userAgent) &&
+      /Safari/.test(navigator.userAgent) &&
+      !/Chrome/.test(navigator.userAgent);
+
+    // Wait for the refreshToken cookie to appear (desktop or supported browsers)
+    try {
+      await waitForCookie('refreshToken', 5000);
+    } catch (err) {
+      // If cookie didn't set in time and it's Mobile Safari, fallback to localStorage
+      if (isMobileSafari && res.data.refreshToken) {
+        localStorage.setItem('refreshToken', res.data.refreshToken);
+      } else {
+        throw err; // for other browsers, fail if cookie isn't set
+      }
+    }
+
+    // Now fetch the user data
     await get().fetchUserData();
+
     set({ loading: false });
     return true;
   } catch (err) {
-    toast.error(err.response?.data?.message || 'Signup failed');
+    toast.error(err.response?.data?.message || err.message || 'Signup failed');
     set({ loading: false });
     return false;
   }
