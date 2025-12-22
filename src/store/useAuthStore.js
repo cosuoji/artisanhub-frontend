@@ -69,31 +69,22 @@ export const useAuthStore = create((set, get) => ({
   },
   
 
-// ✅ SIGNUP
-  signup: async (formData) => {
-    set({ loading: true });
-    try {
-      const res = await axiosInstance.post("/auth/signup", formData, { withCredentials: true });
-
-      // iOS fallback
-      if (/iP(hone|od|ad)/.test(navigator.userAgent) && res.data?.refreshToken) {
-        localStorage.setItem("refreshToken", res.data.refreshToken);
-      }
-
-      if (res.data?._id) {
-        await get().fetchUserData();
-        toast.success("Signup successful!");
-        set({ loading: false });
-        return true;
-      }
-
-      throw new Error("Signup failed");
-    } catch (err) {
-      set({ user: null, loading: false });
-      toast.error(err?.response?.data?.message || "Signup failed");
-      return false;
-    }
-  },
+signup: async (formData) => {
+  set({ loading: true });
+  try {
+    await axiosInstance.post('/auth/signup', formData, { withCredentials: true });
+    // wait a tick for the browser to persist cookies
+    await new Promise(r => setTimeout(r, 500));
+    // now load the user once cookies exist
+    await get().fetchUserData();
+    set({ loading: false });
+    return true;
+  } catch (err) {
+    toast.error(err.response?.data?.message || 'Signup failed');
+    set({ loading: false });
+    return false;
+  }
+},
   
   logout: async () => {
     try {
